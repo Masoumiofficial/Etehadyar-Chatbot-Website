@@ -109,7 +109,7 @@ test('CMS API: authentication, validation, atomic publication and private backup
   let replacement;
   await t.test('changing a password requires the current password and invalidates other sessions', async () => {
     replacement = crypto.randomBytes(18).toString('base64url');
-    assert.equal((await admin.request('change_password', { body: { username: credentials.username, currentPassword: 'wrong-password', password: replacement } })).status, 401);
+    assert.equal((await admin.request('change_password', { body: { username: credentials.username, currentPassword: 'wrong-password', password: replacement } })).status, 403);
     assert.equal((await admin.request('change_password', { body: { username: credentials.username, currentPassword: credentials.password, password: 'too-short' } })).status, 400);
     const r = await admin.request('change_password', { body: { username: credentials.username, currentPassword: credentials.password, password: replacement } });
     assert.equal(r.status, 200, JSON.stringify(r.data));
@@ -138,4 +138,40 @@ test('private storage cannot be configured under the public web root', async t =
   const app = await fixture({ env: { ETEHADYAR_PRIVATE_DIR: '/site/data/private' } }); t.after(() => app.cleanup());
   const r = await new Client(app.url).request('state'); assert.equal(r.status, 503);
   assert.equal(await fs.access(path.join(app.root, 'data/private')).then(() => true, () => false), false);
+});
+
+test('idle and absolute session expiry are enforced server-side and a fresh login can recover', async t => {
+  const app = await fixture(); t.after(() => app.cleanup());
+  const credentials = await app.provision(); const client = new Client(app.url); await client.login(credentials);
+  async function expire(field) {
+    const file = path.join(app.temporary, 'private/sessions', 'sess_' + client.cookies.get('etehadyar_admin_session'));
+    const serialized = await fs.readFile(file, 'utf8');
+    const pattern = new RegExp(field + '\\|i:\\d+;');
+    assert.ok(pattern.test(serialized), 'Expected session timestamp');
+    await fs.writeFile(file, serialized.replace(pattern, field + '|i:1;'));
+  }
+  await expire('last_seen'); assert.equal((await client.request('get_data')).status, 401);
+  await client.login(credentials); await expire('created_at');
+  assert.equal((await client.request('get_data')).status, 401);
+  assert.equal((await client.request('state')).data.authenticated, false);
+  await client.login(credentials); assert.equal((await client.request('get_data')).status, 200);
+});
+
+test('current-password verification is rate limited without pretending the existing session has expired', async t => {
+  const app = await fixture(); t.after(() => app.cleanup());
+  const credentials = await app.provision(); const client = new Client(app.url); await client.login(credentials);
+  const credentialFile = path.join(app.temporary, 'private/credentials.json');
+  const original = await fs.readFile(credentialFile, 'utf8');
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    const response = await client.request('change_password', { body: { username: credentials.username, currentPassword: 'incorrect-fixture-password', password: 'valid-new-fixture-password' } });
+    assert.equal(response.status, attempt < 5 ? 403 : 429);
+    if (attempt === 5) assert.ok(Number(response.headers.get('retry-after')) > 0);
+  }
+  assert.equal((await client.request('state')).data.authenticated, true);
+  assert.equal((await client.request('change_password', { body: { username: credentials.username, currentPassword: credentials.password, password: 'valid-new-fixture-password' } })).status, 429);
+  assert.equal(await fs.readFile(credentialFile, 'utf8'), original);
+  const rateFile = path.join(app.temporary, 'private/login-rate.json');
+  const rates = JSON.parse(await fs.readFile(rateFile, 'utf8')); Object.values(rates).forEach(entry => { entry.until = 1; });
+  await fs.writeFile(rateFile, JSON.stringify(rates));
+  assert.equal((await client.request('change_password', { body: { username: credentials.username, currentPassword: credentials.password, password: 'valid-new-fixture-password' } })).status, 200);
 });

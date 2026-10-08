@@ -16,6 +16,9 @@
 - [CMS content](https://etehadyar.ir/data/site_data.json): current public headline, FAQ, price, product version and releases. Do not store secrets in this file.
 
 ## Website behavior and limits
+- Light is the default appearance, with an optional dark scheme. Decorative depth is a subtle pointer-parallax illusion, not a five-dimensional technology or live product functionality.
+- Motion is disabled on narrow/touch-oriented devices, with reduced motion or forced colors, and while the page is hidden. There is an effects-off control.
+- Public navigation and changelog filtering do not wait for CMS hydration. Expired CMS sessions preserve an exportable draft in the same tab only; it is not persisted or published automatically.
 - Audio demonstrations use prerecorded local MP3s and fixed sample replies; they do not contact a live AI model. Optional browser speech recognition requires permission and may use the browser vendor's recognition service.
 - Pipeline indicators are a simulation, not live queue execution or server health telemetry.
 - ROI is an estimate, excluding AI API costs.

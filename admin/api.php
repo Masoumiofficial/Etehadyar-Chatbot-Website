@@ -113,16 +113,27 @@ try {
         etehadyar_validate_password($newPass);
         $newCredentials = etehadyar_lock('credentials', function () use ($newUser, $newPass, $currentPass) {
             $current = etehadyar_credentials();
-            if (!$current || strlen($currentPass) > 72 || !password_verify($currentPass, $current['passwordHash'])) {
-                throw new EtehadyarHttpError(401, 'رمز فعلی نامعتبر است.');
+            $retry = etehadyar_rate_limit();
+            if ($retry > 0) {
+                header('Retry-After: ' . $retry);
+                throw new EtehadyarHttpError(429, 'تلاش‌های تأیید رمز بیش از حد مجاز است؛ ۱۵ دقیقه بعد دوباره امتحان کنید.');
             }
+            if (!$current || strlen($currentPass) > 72 || !password_verify($currentPass, $current['passwordHash'])) {
+                $retry = etehadyar_rate_limit(true);
+                if ($retry > 0) header('Retry-After: ' . $retry);
+                throw new EtehadyarHttpError($retry > 0 ? 429 : 403, $retry > 0 ? 'تلاش‌های تأیید رمز بیش از حد مجاز است؛ ۱۵ دقیقه بعد دوباره امتحان کنید.' : 'رمز فعلی نامعتبر است.');
+            }
+            etehadyar_rate_limit(false, true);
             $hash = password_hash($newPass, PASSWORD_DEFAULT);
             if ($hash === false) throw new EtehadyarHttpError(503, 'ذخیره رمز امن امکان‌پذیر نیست.');
             $next = ['username' => $newUser, 'passwordHash' => $hash, 'revision' => bin2hex(random_bytes(16))];
             etehadyar_atomic_write(etehadyar_private_dir() . '/credentials.json', json_encode($next, JSON_THROW_ON_ERROR));
             return $next;
         });
-        session_regenerate_id(true);
+        if (!session_regenerate_id(true)) {
+            unset($_SESSION['user'], $_SESSION['credential_revision']);
+            throw new EtehadyarHttpError(503, 'رمز تغییر کرده، اما نشست جدید ساخته نشد؛ با رمز جدید دوباره وارد شوید.');
+        }
         $_SESSION['user'] = $newCredentials['username'];
         $_SESSION['credential_revision'] = $newCredentials['revision'];
         $_SESSION['csrf'] = bin2hex(random_bytes(32));

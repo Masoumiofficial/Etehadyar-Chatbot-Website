@@ -6,6 +6,8 @@
   let siteData = null;
   let originalData = null;
   let revision = '';
+  let originalRevision = '';
+  let pendingDraft = null;
   let dirty = false;
   let toastTimer;
   let modalTrigger = null;
@@ -43,15 +45,23 @@
     if (status) status.textContent = value ? 'تغییرات منتشرنشده دارید.' : 'آخرین داده‌های ذخیره‌شده بارگذاری شد.';
   }
 
-  function showLogin(message = '') {
+  function showLogin(message = '', preserveDraft = false) {
+    if (preserveDraft && siteData && dirty) {
+      collect();
+      pendingDraft = { data: clone(siteData), revision };
+    } else if (!preserveDraft) pendingDraft = null;
     byId('auth-screen').hidden = false;
     byId('admin-app').hidden = true;
     byId('login-pass').value = '';
+    ['current-admin-pass', 'new-admin-pass', 'confirm-admin-pass'].forEach(id => { byId(id).value = ''; });
     byId('login-error').textContent = message;
     byId('login-error').hidden = !message;
-    siteData = null;
-    revision = '';
-    setDirty(false);
+    byId('recovery-notice').hidden = !pendingDraft;
+    byId('btn-save-all').disabled = true;
+    siteData = null; originalData = null;
+    revision = ''; originalRevision = '';
+    setDirty(!!pendingDraft);
+    byId('login-user').focus({ preventScroll: true });
   }
 
   class ApiError extends Error {
@@ -72,7 +82,18 @@
       try { result = await response.json(); }
       catch (_) { throw new ApiError(response.status, 'پاسخ سرور معتبر نیست. این پنل به یک هاست PHP نیاز دارد.'); }
       if (!response.ok || result.success !== true) {
-        if (response.status === 401 && action !== 'login' && action !== 'change_password') showLogin('نشست شما پایان یافته است؛ دوباره وارد شوید.');
+        if (response.status === 401 && !['login', 'state'].includes(action)) {
+          showLogin('نشست شما پایان یافته است؛ دوباره وارد شوید. پیش‌نویس موجود فقط در همین تب محفوظ می‌ماند.', action !== 'logout');
+          byId('btn-login-submit').disabled = true;
+          try {
+            const state = await api('state');
+            byId('setup-notice').hidden = !state.setupRequired;
+            byId('btn-login-submit').disabled = state.setupRequired;
+            byId('btn-refresh-session').hidden = true;
+          } catch (_) {
+            byId('btn-refresh-session').hidden = false;
+          }
+        }
         throw new ApiError(response.status, result.error || 'درخواست انجام نشد.');
       }
       if (result.csrfToken) csrfToken = result.csrfToken;
@@ -80,7 +101,7 @@
     } catch (error) {
       if (error.name === 'AbortError') throw new ApiError(0, 'پاسخ سرور طول کشید. تغییرات را دوباره بارگذاری کنید تا وضعیت ذخیره مشخص شود.');
       if (error instanceof ApiError) throw error;
-      throw new ApiError(0, 'ارتباط با سرور برقرار نشد. تغییرات منتشر نشده‌اند.');
+      throw new ApiError(0, 'ارتباط با سرور قطع شد؛ وضعیت ذخیره مشخص نیست. پیش‌نویس را صادر کنید و داده سرور را پیش از تلاش مجدد مقایسه کنید.');
     } finally { clearTimeout(timer); }
   }
 
@@ -89,28 +110,38 @@
     try {
       const result = await api('get_data');
       if (!validShape(result.data) || typeof result.revision !== 'string') throw new Error('داده‌های دریافتی معتبر نیستند.');
-      siteData = result.data;
-      originalData = clone(siteData);
-      revision = result.revision;
+      const recovered = pendingDraft;
+      originalData = clone(result.data); originalRevision = result.revision;
+      siteData = recovered ? clone(recovered.data) : result.data;
+      revision = recovered ? recovered.revision : result.revision;
+      pendingDraft = null; byId('recovery-notice').hidden = true;
       populate();
-      setDirty(false);
+      setDirty(!!recovered);
+      if (recovered) toast(revision === result.revision ? 'پیش‌نویس بازیابی شد؛ برای انتشار، ذخیره کنید.' : 'پیش‌نویس بازیابی شد، اما داده سرور تغییر کرده است. ابتدا خروجی بگیرید و تغییرات را مقایسه کنید.', revision !== result.revision);
       byId('btn-save-all').disabled = false;
-    } catch (error) { toast(error.message, true); }
+    } catch (error) {
+      if (pendingDraft) {
+        showLogin('بارگذاری داده سرور انجام نشد؛ پیش‌نویس در همین تب محفوظ است و می‌توانید خروجی بگیرید.', true);
+        byId('btn-refresh-session').hidden = false;
+      }
+      toast(error.message, true);
+    }
   }
 
-  async function refreshState() {
+  async function refreshState(preserveDraft = false) {
     byId('btn-login-submit').disabled = true;
     try {
       const state = await api('state');
       byId('setup-notice').hidden = !state.setupRequired;
       byId('btn-login-submit').disabled = state.setupRequired;
+      byId('btn-refresh-session').hidden = true;
       if (state.authenticated) {
         byId('auth-screen').hidden = true;
         byId('admin-app').hidden = false;
         byId('new-admin-user').value = state.username || '';
         await loadData();
-      } else showLogin();
-    } catch (error) { showLogin(error.message); }
+      } else showLogin('', preserveDraft);
+    } catch (error) { showLogin(error.message, preserveDraft); byId('btn-refresh-session').hidden = false; }
   }
 
   function validShape(value) {
@@ -310,14 +341,14 @@
     try {
       collect();
       const result = await api('save_data', { data: siteData, revision });
-      siteData = result.data; originalData = clone(siteData); revision = result.revision;
+      siteData = result.data; originalData = clone(siteData); revision = originalRevision = result.revision;
       populate(); setDirty(false); toast('✓ تغییرات با موفقیت در سرور ذخیره و منتشر شد.');
     } catch (error) { toast(error.message, true); }
     finally { button.disabled = !siteData; }
   });
   byId('btn-revert').addEventListener('click', () => {
     if (!originalData || !confirm('تغییرات منتشرنشده بازگردانی شوند؟')) return;
-    siteData = clone(originalData); populate(); setDirty(false);
+    siteData = clone(originalData); revision = originalRevision; populate(); setDirty(false);
   });
   byId('btn-reload-data').addEventListener('click', async () => {
     if (dirty && !confirm('تغییرات منتشرنشده کنار گذاشته و اطلاعات سرور بارگذاری شود؟')) return;
@@ -328,6 +359,10 @@
     const anchor = doc.createElement('a'); anchor.href = url; anchor.download = name;
     doc.body.append(anchor); anchor.click(); anchor.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
+  byId('btn-export-recovery').addEventListener('click', () => {
+    if (pendingDraft) download(new Blob([JSON.stringify(pendingDraft.data, null, 2)], { type: 'application/json' }), 'site_data_unsaved_draft.json');
+  });
+  byId('btn-refresh-session').addEventListener('click', () => refreshState(true));
   byId('btn-export-json').addEventListener('click', () => {
     if (!siteData) return;
     collect(); download(new Blob([JSON.stringify(siteData, null, 2)], { type: 'application/json' }), 'site_data_backup.json');

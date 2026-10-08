@@ -1,11 +1,11 @@
 (function () {
   'use strict';
   const scriptUrl = document.currentScript.src;
-  (window.ETEHADYAR_READY || Promise.resolve()).then(function () {
+  (function initializeInteractions() {
     const doc = document;
     const root = doc.documentElement;
     const body = doc.body;
-    const cfg = window.ETEHADYAR_CONFIG || {};
+    let cfg = window.ETEHADYAR_CONFIG || {};
     const byId = id => doc.getElementById(id);
     const initialTitle = doc.title;
     const langButton = byId('lang-toggle');
@@ -36,6 +36,10 @@
       window.ETEHADYAR_PUBLIC?.updateCheckout(root.dataset.lang || 'fa', selected);
       if (persist) store('etehadyar-currency', selected);
     }
+    function updateTitle() {
+      if (langButton) doc.title = isEnglish() ? cfg.siteNameEn + ' ' + cfg.currentVersion + ' — AI WordPress Automation' : cfg.siteName + ' ' + cfg.currentVersion + ' — هوش مصنوعی و اتوماسیون وردپرس';
+      else doc.title = initialTitle;
+    }
     function setLanguage(language, initial = false) {
       // Documentation/about are Persian-only: a stored English preference must not flip their direction or titles.
       const en = !!langButton && language === 'en';
@@ -43,13 +47,16 @@
       if (langButton) {
         store('etehadyar-lang', root.lang);
         langButton.setAttribute('aria-label', en ? 'تغییر زبان به فارسی' : 'Switch to English overview');
-        doc.title = en ? cfg.siteNameEn + ' ' + cfg.currentVersion + ' — AI WordPress Automation' : cfg.siteName + ' ' + cfg.currentVersion + ' — هوش مصنوعی و اتوماسیون وردپرس';
+        updateTitle();
       } else doc.title = initialTitle;
       if (menuButton) menuButton.setAttribute('aria-label', label('باز کردن منو', 'Open menu'));
       if (!currencyTouched) setCurrency(initial ? stored('etehadyar-currency', en ? 'usd' : 'irr') : en ? 'usd' : 'irr');
       else window.ETEHADYAR_PUBLIC?.updateCheckout(root.lang, root.dataset.currency);
       window.ETEHADYAR_PUBLIC?.updateSchemas(root.lang);
       updateCalculator();
+      const currentTour = tourButtons.find(button => button.getAttribute('aria-selected') === 'true');
+      if (currentTour) activateTour(currentTour.dataset.tour);
+      doc.dispatchEvent(new CustomEvent('etehadyar:language-change'));
     }
     langButton?.addEventListener('click', () => setLanguage(isEnglish() ? 'fa' : 'en'));
     currencies.forEach((button, index) => {
@@ -63,22 +70,24 @@
     });
     function closeMenu(focus = false) {
       const wasOpen = menu?.classList.contains('open'); menu?.classList.remove('open');
-      menuButton?.setAttribute('aria-expanded', 'false'); body.classList.remove('menu-open');
+      menuButton?.setAttribute('aria-expanded', 'false');
+      menuButton?.setAttribute('aria-label', label('باز کردن منو', 'Open menu')); body.classList.remove('menu-open');
       if (focus && wasOpen) menuButton.focus();
     }
     menuButton?.addEventListener('click', () => {
       const open = !menu.classList.contains('open'); menu.classList.toggle('open', open);
-      menuButton.setAttribute('aria-expanded', String(open)); body.classList.toggle('menu-open', open);
+      menuButton.setAttribute('aria-expanded', String(open));
+      menuButton.setAttribute('aria-label', label(open ? 'بستن منو' : 'باز کردن منو', open ? 'Close menu' : 'Open menu')); body.classList.toggle('menu-open', open);
     });
     menu?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => closeMenu()));
-    doc.addEventListener('click', event => { if (!event.target.closest('.nav-shell')) closeMenu(); });
+    doc.addEventListener('click', event => { if (!event.target.closest('.nav-shell, .doc-nav')) closeMenu(); });
 
     function activateTour(name) {
       tourButtons.forEach(button => { const active = button.dataset.tour === name; button.setAttribute('aria-selected', String(active)); button.tabIndex = active ? 0 : -1; });
       tourPanels.forEach(panel => { panel.hidden = panel.dataset.tourPanel !== name; });
       const title = byId('device-title');
       const active = tourButtons.find(button => button.dataset.tour === name);
-      if (title && active) title.textContent = cfg.siteName + ' ' + cfg.currentVersion + ' — ' + active.querySelector('b').textContent;
+      if (title && active) title.textContent = (isEnglish() ? cfg.siteNameEn : cfg.siteName) + ' ' + cfg.currentVersion + ' — ' + active.querySelector('b').innerText;
     }
     tourButtons.forEach((button, index) => {
       button.addEventListener('click', () => activateTour(button.dataset.tour));
@@ -220,11 +229,11 @@
       const hours = Math.round(Number(articles.value) * 4.5 + Number(videos.value) * 5.5 + Number(support.value) * 0.25);
       const savedCost = hours * 160000;
       const license = Number(String(cfg.priceToman).replace(/[۰-۹]/g, digit => '۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)).replace(/[,٬\s]/g, ''));
-      const days = Math.max(1, Math.ceil(license / (savedCost / 30)));
+      const days = savedCost > 0 && Number.isFinite(license) && license > 0 ? Math.max(1, Math.ceil(license / (savedCost / 30))) : null;
       const number = value => isEnglish() ? String(value) : faNumber(value);
       [['calc-val-articles', articles.value], ['calc-val-videos', videos.value], ['calc-val-support', support.value], ['res-hours', hours]].forEach(([id, value]) => { if (byId(id)) byId(id).textContent = number(value); });
       byId('res-cost').textContent = savedCost.toLocaleString(isEnglish() ? 'en-US' : 'fa-IR') + label(' تومان', ' Toman');
-      byId('res-roi-days').textContent = number(days) + label(' روز', ' days');
+      byId('res-roi-days').textContent = days === null ? label('قابل محاسبه نیست', 'Not applicable') : number(days) + label(' روز', ' days');
     }
     [articles, videos, support].forEach(input => input?.addEventListener('input', updateCalculator));
     const pipeline = byId('btn-run-live-demo');
@@ -235,5 +244,11 @@
       }, 1000);
     });
     setLanguage(stored('etehadyar-lang', 'fa'), true);
-  });
+    (window.ETEHADYAR_READY || Promise.resolve()).then(() => {
+      cfg = window.ETEHADYAR_CONFIG || cfg;
+      updateTitle(); updateCalculator();
+      const currentTour = tourButtons.find(button => button.getAttribute('aria-selected') === 'true');
+      if (currentTour) activateTour(currentTour.dataset.tour);
+    });
+  })();
 })();

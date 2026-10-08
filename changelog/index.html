@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#070910">
-  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#f7f9fd">
+  <meta name="color-scheme" content="light">
+  <script src="../assets/js/appearance.js"></script>
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="description" content="تاریخچه کامل ۱۱۲ نسخه اتحادیار از نسخه ۱.۰.۰ تا ۶.۱۲.۰، همراه گفت‌وگوی صوتی زنده، صف کارها، مرکز سلامت، کارشناس صوتی و مسیر آزمایشی Alpha.">
   <link rel="canonical" href="https://etehadyar.ir/changelog/">
@@ -20,6 +21,7 @@
   <title>تاریخچه کامل اتحادیار — نسخه 1.0.0 تا 6.12.0</title>
   <link rel="stylesheet" href="../assets/css/site.css">
   <link rel="stylesheet" href="../assets/css/changelog.css">
+  <link rel="stylesheet" href="../assets/css/appearance.css">
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "تاریخچه کامل تغییرات اتحادیار", "description": "تمام 112 نسخه اصلی اتحادیار از 1.0.0 تا 6.12.0 و مسیر آزمایشی v6 Alpha.", "inLanguage": "fa-IR", "mainEntityOfPage": "https://etehadyar.ir/changelog/", "author": {"@type": "Person", "name": "Sajad Masoumi"}, "publisher": {"@type": "Organization", "name": "EtehadWP", "url": "https://etehadwp.com/"}}</script>
 </head>
 <body class="changelog-page">
@@ -34,14 +36,18 @@
         <img class="brand-icon" src="../assets/images/app-icon.webp" alt="" width="43" height="43">
         <span class="brand-copy"><strong data-site-name-fa>اتحادیار</strong><small>COMPLETE CHANGELOG · v6.12</small></span>
       </a>
-      <nav aria-label="ناوبری تاریخچه">
+      <nav class="desktop-nav" aria-label="ناوبری تاریخچه">
         <a href="../#voice">دستیار صوتی</a>
         <a href="../#architecture">کارخانه محتوا</a>
         <a href="../#architecture">صف کارها</a>
         <a href="../#pricing">قیمت</a>
         <a href="../">صفحه اصلی</a>
       </nav>
-      <a class="button button-primary button-small" data-buy aria-disabled="true" role="link" tabindex="-1"><span class="lang-fa">خرید به‌زودی؛ درگاه تنظیم نشده</span><span class="lang-en">Checkout not configured yet</span></a>
+      <div class="nav-actions">
+        <a class="button button-primary button-small header-buy" data-buy aria-disabled="true" role="link" tabindex="-1"><span class="lang-fa">خرید به‌زودی؛ درگاه تنظیم نشده</span><span class="lang-en">Checkout not configured yet</span></a>
+        <button class="menu-button" id="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="باز کردن منو"><svg viewBox="0 0 24 24" fill="none"><path d="M5 7h14M5 12h14M5 17h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      </div>
+      <nav class="mobile-menu" id="mobile-menu" aria-label="ناوبری موبایل"><a href="../">صفحه اصلی</a><a href="../docs/">مستندات</a><a href="../about/">درباره ما</a><a href="../changelog/">تاریخچه</a><a href="../#pricing">قیمت</a></nav>
     </div>
   </header>
 
@@ -2852,6 +2858,7 @@
 
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/content.js"></script>
+  <script src="../assets/js/site.js"></script>
   <script src="../assets/js/changelog.js"></script>
 </body>
 </html>

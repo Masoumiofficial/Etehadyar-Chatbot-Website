@@ -2,11 +2,15 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="utf-8">
+  <meta name="theme-color" content="#f7f9fd">
+  <meta name="color-scheme" content="light">
+  <script src="../assets/js/appearance.js"></script>
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow">
   <title>پنل مدیریت اختصاصی اتحادیار — Etehadyar Admin CMS</title>
   <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="../assets/css/appearance.css">
 </head>
 <body>
 
@@ -26,6 +30,11 @@
         <code dir="ltr">php scripts/setup-admin.php --username YOUR_USERNAME</code>
         <p>اطلاعات ورود خارج از روت عمومی ذخیره می‌شود. هیچ رمزی در این صفحه یا حافظه مرورگر نگهداری نمی‌شود.</p>
       </div>
+      <div id="recovery-notice" class="recovery-notice" role="status" hidden>
+        پیش‌نویس منتشرنشدهٔ شما در حافظهٔ همین تب محفوظ است. پس از ورود، بدون انتشار خودکار بازیابی می‌شود. بستن یا تازه‌کردن تب آن را از بین می‌برد؛ می‌توانید همین حالا خروجی بگیرید.
+        <button id="btn-export-recovery" type="button" class="btn btn-secondary btn-small">دانلود پیش‌نویس JSON</button>
+      </div>
+      <button id="btn-refresh-session" type="button" class="btn btn-secondary btn-small" hidden>تلاش مجدد برای اتصال ورود</button>
       <form id="login-form" style="display:grid; gap:16px; text-align:right;">
         <div class="form-group">
           <label for="login-user">نام کاربری</label>
@@ -358,32 +367,32 @@
             </div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
               <div class="admin-card" style="margin:0; padding:18px;">
-                <strong style="color:#38bdf8;">۰۱. اتاق فرمان (Dashboard)</strong>
+                <strong style="color:var(--blue-light);">۰۱. اتاق فرمان (Dashboard)</strong>
                 <p style="font-size:13px; color:var(--admin-muted); margin:4px 0 10px;">پیش‌نمایش: <code>assets/images/ui/dashboard.webp</code> (فارسی و سه‌بعدی)</p>
                 <img src="../assets/images/ui/dashboard.webp" alt="Dashboard" style="border-radius:10px; max-height:140px; width:100%; object-fit:cover;">
               </div>
               <div class="admin-card" style="margin:0; padding:18px;">
-                <strong style="color:#38bdf8;">۰۲. کارخانه محتوا (Factory)</strong>
+                <strong style="color:var(--blue-light);">۰۲. کارخانه محتوا (Factory)</strong>
                 <p style="font-size:13px; color:var(--admin-muted); margin:4px 0 10px;">پیش‌نمایش: <code>assets/images/ui/factory.webp</code> (۷ خروجی همزمان)</p>
                 <img src="../assets/images/ui/factory.webp" alt="Factory" style="border-radius:10px; max-height:140px; width:100%; object-fit:cover;">
               </div>
               <div class="admin-card" style="margin:0; padding:18px;">
-                <strong style="color:#38bdf8;">۰۳. ویدیو ساز (Video Studio)</strong>
+                <strong style="color:var(--blue-light);">۰۳. ویدیو ساز (Video Studio)</strong>
                 <p style="font-size:13px; color:var(--admin-muted); margin:4px 0 10px;">پیش‌نمایش: <code>assets/images/ui/video.webp</code> (MP4 و SRT)</p>
                 <img src="../assets/images/ui/video.webp" alt="Video" style="border-radius:10px; max-height:140px; width:100%; object-fit:cover;">
               </div>
               <div class="admin-card" style="margin:0; padding:18px;">
-                <strong style="color:#38bdf8;">۰۴. فروش‌یار (WooCommerce Turbo)</strong>
+                <strong style="color:var(--blue-light);">۰۴. فروش‌یار (WooCommerce Turbo)</strong>
                 <p style="font-size:13px; color:var(--admin-muted); margin:4px 0 10px;">پیش‌نمایش: <code>assets/images/ui/woo.webp</code> (بهینه‌ساز محصولات)</p>
                 <img src="../assets/images/ui/woo.webp" alt="Woo" style="border-radius:10px; max-height:140px; width:100%; object-fit:cover;">
               </div>
               <div class="admin-card" style="margin:0; padding:18px;">
-                <strong style="color:#38bdf8;">۰۵. گزارش‌های مدیریتی (Reports)</strong>
+                <strong style="color:var(--blue-light);">۰۵. گزارش‌های مدیریتی (Reports)</strong>
                 <p style="font-size:13px; color:var(--admin-muted); margin:4px 0 10px;">پیش‌نمایش: <code>assets/images/ui/reports.webp</code> (XLSX و PDF)</p>
                 <img src="../assets/images/ui/reports.webp" alt="Reports" style="border-radius:10px; max-height:140px; width:100%; object-fit:cover;">
               </div>
               <div class="admin-card" style="margin:0; padding:18px;">
-                <strong style="color:#38bdf8;">۰۶. پشتیبانی صوتی (Live Voice)</strong>
+                <strong style="color:var(--blue-light);">۰۶. پشتیبانی صوتی (Live Voice)</strong>
                 <p style="font-size:13px; color:var(--admin-muted); margin:4px 0 10px;">پیش‌نمایش: <code>assets/images/ui/voice.webp</code> (گفت‌وگوی زنده)</p>
                 <img src="../assets/images/ui/voice.webp" alt="Voice" style="border-radius:10px; max-height:140px; width:100%; object-fit:cover;">
               </div>

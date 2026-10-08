@@ -11,7 +11,7 @@ const require = createRequire(import.meta.url);
 const chromiumDirectory = path.resolve(path.dirname(require.resolve('@sparticuz/chromium')), '..');
 await inflate(path.join(chromiumDirectory, 'bin/al2023.tar.br'));
 setupLambdaEnvironment('/tmp/al2023/lib');
-const browser = await playwright.launch({ executablePath: await chromium.executablePath(), args: chromium.args, headless: true });
+const browser = await playwright.launch({ executablePath: await chromium.executablePath(), args: chromium.args.filter(argument => argument !== '--single-process'), headless: true });
 const app = await fixture();
 const credentials = await app.provision();
 const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
@@ -57,6 +57,108 @@ try {
     }
   }
   await page.setViewportSize({ width: 1440, height: 900 }); await navigate('/');
+  await check('Light is the default; theme and depth controls persist across pages without changing content', async () => {
+    await navigate('/'); assert.equal(await page.locator('html').getAttribute('data-theme'), 'light');
+    const title = await page.title();
+    await page.locator('[data-appearance="theme"]').press('Enter');
+    assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark');
+    assert.equal(await page.locator('[data-appearance="theme"]').getAttribute('aria-pressed'), 'true');
+    assert.equal(await page.title(), title);
+    await page.locator('[data-appearance="depth"]').click();
+    assert.equal(await page.locator('html').getAttribute('data-depth'), 'off');
+    await navigate('/docs/');
+    assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark');
+    assert.equal(await page.locator('html').getAttribute('data-depth'), 'off');
+    await page.locator('[data-appearance="theme"]').click(); await page.locator('[data-appearance="depth"]').click();
+    await navigate('/'); assert.equal(await page.locator('html').getAttribute('data-theme'), 'light');
+    assert.equal(await page.locator('meta[name="color-scheme"]').getAttribute('content'), 'light');
+    assert.equal(await page.locator('html').getAttribute('data-motion'), 'off');
+    assert.equal(await page.locator('.depth-scene').getAttribute('aria-hidden'), 'true');
+  });
+  for (const route of ['/', '/docs/', '/about/', '/changelog/', '/admin/']) {
+    await check('Dark appearance also passes automated accessibility checks: ' + route, async () => {
+      await navigate(route); await page.locator('[data-appearance="theme"]').click();
+      assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark');
+      assert.deepEqual(await accessibility(), []);
+      await page.locator('[data-appearance="theme"]').click();
+    });
+  }
+  await navigate('/');
+  await check('Public navigation and changelog search work before a slow CMS request completes', async () => {
+    const slow = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+    const tab = await slow.newPage(); let resume;
+    try {
+      const blocked = new Promise(resolve => { resume = resolve; });
+      await tab.route('**/data/site_data.json', async route => { await blocked; await route.continue(); });
+      await tab.goto(app.url + '/', { waitUntil: 'domcontentloaded' });
+      assert.equal(await tab.evaluate(() => !!window.ETEHADYAR_DATA), false);
+      await tab.locator('#menu-toggle').click(); assert.equal(await tab.locator('#mobile-menu').isVisible(), true);
+      await tab.keyboard.press('Escape'); assert.equal(await tab.locator('#menu-toggle').getAttribute('aria-expanded'), 'false');
+      await tab.locator('[data-appearance="theme"]').click();
+      assert.equal(await tab.locator('html').getAttribute('data-theme'), 'dark');
+      resume(); await tab.waitForFunction(() => !!window.ETEHADYAR_DATA); await tab.unroute('**/data/site_data.json');
+      const next = new Promise(resolve => { resume = resolve; });
+      await tab.route('**/data/site_data.json', async route => { await next; await route.continue(); });
+      await tab.goto(app.url + '/changelog/', { waitUntil: 'domcontentloaded' });
+      await tab.locator('#release-search').fill('۶.۱۲.۰');
+      assert.equal(await tab.locator('.release-card:not(.is-filtered)').count(), 1);
+      await tab.locator('#menu-toggle').click(); assert.equal(await tab.locator('#mobile-menu').isVisible(), true);
+      resume(); await tab.waitForFunction(() => !!window.ETEHADYAR_DATA); await tab.unroute('**/data/site_data.json');
+      assert.equal(await tab.locator('.release-card:not(.is-filtered)').count(), 1);
+    } finally { resume?.(); await slow.close(); }
+  });
+  await check('Subtle parallax runs only when allowed and stops for reduced motion, mobile or the effects switch', async () => {
+    const desktop = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'no-preference' });
+    const tab = await desktop.newPage();
+    try {
+      await tab.goto(app.url + '/', { waitUntil: 'networkidle' });
+      assert.equal(await tab.locator('html').getAttribute('data-motion'), 'on');
+      await tab.mouse.move(950, 420);
+      await tab.waitForFunction(() => !!document.documentElement.style.getPropertyValue('--depth-x'));
+      const x = await tab.evaluate(() => parseFloat(document.documentElement.style.getPropertyValue('--depth-x'))); assert.ok(Math.abs(x) <= 12);
+      await tab.locator('[data-appearance="depth"]').click();
+      assert.equal(await tab.locator('html').getAttribute('data-motion'), 'off');
+      assert.equal(await tab.evaluate(() => document.documentElement.style.getPropertyValue('--depth-x')), '');
+      await tab.locator('[data-appearance="depth"]').click(); await tab.emulateMedia({ reducedMotion: 'reduce' });
+      await tab.waitForFunction(() => document.documentElement.dataset.motion === 'off');
+      await tab.mouse.move(800, 380); assert.equal(await tab.evaluate(() => document.documentElement.style.getPropertyValue('--depth-x')), '');
+      await tab.emulateMedia({ reducedMotion: 'no-preference' }); await tab.setViewportSize({ width: 390, height: 844 });
+      await tab.waitForFunction(() => document.documentElement.dataset.motion === 'off');
+      assert.ok(await tab.evaluate(() => document.body.scrollWidth <= innerWidth + 1));
+    } finally { await desktop.close(); }
+  });
+  await check('Light appearance and core interactions survive blocked preference storage', async () => {
+    const isolated = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+    try {
+      await isolated.addInitScript(() => { Object.defineProperty(window, 'localStorage', { get() { throw new DOMException('Denied', 'SecurityError'); } }); });
+      const tab = await isolated.newPage(); const problems = []; tab.on('pageerror', error => problems.push(error.message));
+      await tab.goto(app.url + '/', { waitUntil: 'networkidle' });
+      assert.equal(await tab.locator('html').getAttribute('data-theme'), 'light');
+      await tab.locator('[data-appearance="theme"]').click(); assert.equal(await tab.locator('html').getAttribute('data-theme'), 'dark');
+      await tab.locator('#menu-toggle').click(); assert.equal(await tab.locator('#mobile-menu').isVisible(), true);
+      assert.deepEqual(problems, []);
+    } finally { await isolated.close(); }
+  });
+  await check('Static fallback without JavaScript is light, readable and does not enable checkout', async () => {
+    const isolated = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
+    try {
+      const tab = await isolated.newPage(); await tab.goto(app.url + '/', { waitUntil: 'networkidle' });
+      assert.equal(await tab.locator('meta[name="color-scheme"]').getAttribute('content'), 'light');
+      assert.equal(await tab.locator('h1').isVisible(), true);
+      assert.equal(await tab.locator('body').evaluate(node => getComputedStyle(node).backgroundColor), 'rgb(247, 249, 253)');
+      assert.ok((await tab.locator('[data-buy]').evaluateAll(nodes => nodes.map(node => node.hasAttribute('href')))).every(value => !value));
+      assert.ok(await tab.evaluate(() => document.body.scrollWidth <= innerWidth + 1));
+    } finally { await isolated.close(); }
+  });
+  await check('High contrast keeps headings visible and disables decorative motion', async () => {
+    const isolated = await browser.newContext({ viewport: { width: 1440, height: 900 }, forcedColors: 'active', reducedMotion: 'no-preference' });
+    try {
+      const tab = await isolated.newPage(); await tab.goto(app.url + '/', { waitUntil: 'networkidle' });
+      assert.equal(await tab.locator('html').getAttribute('data-motion'), 'off');
+      assert.equal(await tab.locator('.depth-scene').isVisible(), false);
+      assert.notEqual(await tab.locator('.hero-gradient').first().evaluate(node => getComputedStyle(node).color), 'rgba(0, 0, 0, 0)');
+    } finally { await isolated.close(); }
+  });
   await check('Unconfigured checkout is disabled and no offer points to the homepage', async () => {
     const links = await page.locator('[data-buy]').evaluateAll(nodes => nodes.map(node => ({ disabled: node.getAttribute('aria-disabled'), href: node.getAttribute('href') })));
     assert.ok(links.length > 0 && links.every(link => link.disabled === 'true' && link.href === null));
@@ -90,9 +192,17 @@ try {
     await page.locator('#stop-voice-btn').click(); assert.match(await page.locator('#voice-status-label').innerText(), /متوقف/);
     await page.locator('#btn-run-live-demo').click(); await page.waitForFunction(() => !document.querySelector('#btn-run-live-demo').disabled);
   });
+  await check('Zero activity is supported without an infinite or misleading ROI estimate', async () => {
+    for (const id of ['calc-articles', 'calc-videos', 'calc-support']) {
+      await page.locator('#' + id).evaluate(node => { node.value = '0'; node.dispatchEvent(new Event('input', { bubbles: true })); });
+    }
+    assert.equal(await page.locator('#res-hours').innerText(), '۰');
+    assert.equal(await page.locator('#res-roi-days').innerText(), 'قابل محاسبه نیست');
+    assert.ok(!(await page.locator('.calc-card').innerText()).includes('Infinity'));
+  });
   await check('Mobile menus remain usable on the homepage and docs', async () => {
     await page.setViewportSize({ width: 390, height: 844 });
-    for (const route of ['/', '/docs/', '/about/']) {
+    for (const route of ['/', '/docs/', '/about/', '/changelog/']) {
       await navigate(route); await page.locator('#menu-toggle').click();
       assert.equal(await page.locator('#mobile-menu').isVisible(), true); await page.keyboard.press('Escape');
       assert.equal(await page.locator('#menu-toggle').getAttribute('aria-expanded'), 'false');
@@ -178,6 +288,64 @@ try {
       assert.ok(await page.evaluate(() => document.body.scrollWidth <= innerWidth + 1));
       if (width === 320) assert.deepEqual(await accessibility(), []);
     }
+  });
+  await check('Expired server sessions refresh CSRF and preserve an exportable in-memory draft for reauthentication', async () => {
+    await page.setViewportSize({ width: 1440, height: 900 }); await page.locator('[data-tab="tab-config"]').click();
+    await page.locator('#cfg-price-usd').fill('177');
+    const published = await fs.readFile(path.join(app.root, 'data/site_data.json'), 'utf8');
+    const sessions = path.join(app.temporary, 'private/sessions');
+    for (const name of await fs.readdir(sessions)) if (name.startsWith('sess_')) await fs.rm(path.join(sessions, name));
+    const denied = page.waitForResponse(response => response.url().includes('action=save_data') && response.request().method() === 'POST');
+    await page.locator('#btn-save-all').click(); assert.equal((await denied).status(), 401);
+    await page.waitForFunction(() => !document.querySelector('#recovery-notice').hidden && !document.querySelector('#btn-login-submit').disabled);
+    const downloadPromise = page.waitForEvent('download'); await page.locator('#btn-export-recovery').click();
+    const backup = JSON.parse(await fs.readFile(await (await downloadPromise).path(), 'utf8')); assert.equal(backup.config.priceUSD, '177');
+    await page.locator('#login-user').fill(credentials.username); await page.locator('#login-pass').fill(credentials.password);
+    const login = page.waitForResponse(response => response.url().includes('action=login'));
+    await page.locator('#btn-login-submit').click(); assert.equal((await login).status(), 200);
+    await page.waitForFunction(() => !document.querySelector('#btn-save-all').disabled);
+    assert.equal(await page.locator('#cfg-price-usd').inputValue(), '177');
+    assert.match(await page.locator('#save-status').textContent(), /منتشرنشده/);
+    assert.equal(await fs.readFile(path.join(app.root, 'data/site_data.json'), 'utf8'), published);
+    assert.equal(await page.locator('#current-admin-pass').inputValue(), '');
+    await page.locator('#btn-revert').click(); assert.equal(await page.locator('#cfg-price-usd').inputValue(), '151');
+  });
+  await check('Recovered drafts retain their original revision and cannot overwrite concurrent server changes', async () => {
+    await page.locator('[data-tab="tab-config"]').click(); await page.locator('#cfg-price-usd').fill('178');
+    const sessions = path.join(app.temporary, 'private/sessions');
+    for (const name of await fs.readdir(sessions)) if (name.startsWith('sess_')) await fs.rm(path.join(sessions, name));
+    await page.locator('#btn-save-all').click();
+    await page.waitForFunction(() => !document.querySelector('#recovery-notice').hidden && !document.querySelector('#btn-login-submit').disabled);
+    const other = new Client(app.url); await other.login(credentials);
+    const current = (await other.request('get_data')).data; current.data.config.priceUSD = '152';
+    assert.equal((await other.request('save_data', { body: current })).status, 200);
+    await page.locator('#login-user').fill(credentials.username); await page.locator('#login-pass').fill(credentials.password);
+    await page.locator('#btn-login-submit').click(); await page.waitForFunction(() => !document.querySelector('#btn-save-all').disabled);
+    const conflict = page.waitForResponse(response => response.url().includes('action=save_data') && response.request().method() === 'POST');
+    await page.locator('#btn-save-all').click(); assert.equal((await conflict).status(), 409);
+    assert.equal((await other.request('get_data')).data.data.config.priceUSD, '152');
+    await page.locator('#btn-revert').click(); assert.equal(await page.locator('#cfg-price-usd').inputValue(), '152');
+    const saved = page.waitForResponse(response => response.url().includes('action=save_data') && response.request().method() === 'POST');
+    await page.locator('#btn-save-all').click(); assert.equal((await saved).status(), 200);
+  });
+  await check('A recovered draft remains downloadable if server content fails after reauthentication', async () => {
+    await page.locator('[data-tab="tab-config"]').click(); await page.locator('#cfg-price-usd').fill('179');
+    const published = await fs.readFile(path.join(app.root, 'data/site_data.json'), 'utf8');
+    const sessions = path.join(app.temporary, 'private/sessions');
+    for (const name of await fs.readdir(sessions)) if (name.startsWith('sess_')) await fs.rm(path.join(sessions, name));
+    await page.locator('#btn-save-all').click();
+    await page.waitForFunction(() => !document.querySelector('#recovery-notice').hidden && !document.querySelector('#btn-login-submit').disabled);
+    await page.route('**/admin/api.php?action=get_data', route => route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ success: false, error: 'خطای خواندن داده — آزمون' }) }));
+    await page.locator('#login-user').fill(credentials.username); await page.locator('#login-pass').fill(credentials.password);
+    await page.locator('#btn-login-submit').click();
+    await page.waitForFunction(() => !document.querySelector('#recovery-notice').hidden && !document.querySelector('#btn-refresh-session').hidden);
+    const downloaded = page.waitForEvent('download'); await page.locator('#btn-export-recovery').click();
+    const draft = JSON.parse(await fs.readFile(await (await downloaded).path(), 'utf8')); assert.equal(draft.config.priceUSD, '179');
+    await page.unroute('**/admin/api.php?action=get_data'); await page.locator('#btn-refresh-session').click();
+    await page.waitForFunction(() => !document.querySelector('#btn-save-all').disabled);
+    assert.equal(await page.locator('#cfg-price-usd').inputValue(), '179');
+    assert.equal(await fs.readFile(path.join(app.root, 'data/site_data.json'), 'utf8'), published);
+    await page.locator('#btn-revert').click();
   });
   await check('Draft deletion, JSON export/import, rejection and revert never publish implicitly', async () => {
     await page.setViewportSize({ width: 1440, height: 900 });

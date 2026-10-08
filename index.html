@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#000000">
-  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#f7f9fd">
+  <meta name="color-scheme" content="light">
+  <script src="assets/js/appearance.js"></script>
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="description" content="اتحادیار ۶.۱۲؛ افزونه جامع هوش مصنوعی، تولید محتوا و اتوماسیون وردپرس و ووکامرس با گفت‌وگوی صوتی پیوسته، صف کارهای نامتقارن، کارخانه محتوا ۷گانه و امنیت AES-256.">
   <link rel="canonical" href="https://etehadyar.ir/">
   <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/estedad-arabic-variable.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/images/founder-hero.webp" as="image" type="image/webp" fetchpriority="high">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="fa_IR">
   <meta property="og:locale:alternate" content="en_US">
@@ -25,6 +25,7 @@
   <meta name="twitter:image" content="https://etehadyar.ir/assets/images/og-cover.jpg">
   <title>اتحادیار 6.12 — افزونه هوشمند و اتوماسیون وردپرس و ووکامرس</title>
   <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="stylesheet" href="assets/css/appearance.css">
   <script id="software-schema" type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -177,11 +178,11 @@ with One Smart Command.</span></h1>
         <div class="hero-stats-row">
           <div><b data-release-count>۱۱۲</b><span><span class="lang-fa">نسخه پایدار توسعه</span><span class="lang-en">documented releases</span></span></div>
           <div><b>۷</b><span><span class="lang-fa">خروجی همزمان از یک موضوع</span><span class="lang-en">outputs per prompt</span></span></div>
-          <div><b>۱۰۰٪</b><span><span class="lang-fa">پردازش نامتقارن بدون مسدودی سرور</span><span class="lang-en">zero server timeout</span></span></div>
+          <div><b>Async</b><span><span class="lang-fa">معماری پردازش کارهای پس‌زمینه</span><span class="lang-en">background job architecture</span></span></div>
           <div><b>AES-256</b><span><span class="lang-fa">صندوق امنیتی کلیدها سمت سرور</span><span class="lang-en">encrypted vault</span></span></div>
         </div>
 
-        <a class="scroll-cue" href="#live-demo" aria-label="اسکرول به دموی زنده">
+        <a class="scroll-cue" href="#live-demo" aria-label="اسکرول به دموی نمایشی">
           <span><span class="lang-fa">ببینید اتحادیار چه کار می‌کند</span><span class="lang-en">See how Etehadyar works</span></span>
           <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14m-6-6 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
@@ -189,7 +190,7 @@ with One Smart Command.</span></h1>
     </section>
 
     <!-- 2. LIVE PRODUCT PIPELINE DEMO («ببین اتحادیار چه کار می‌کند») -->
-    <section class="section" id="live-demo" style="background:rgba(11, 17, 32, 0.4); border-block:1px solid var(--border);">
+    <section class="section" id="live-demo" style="background:var(--surface-inset); border-block:1px solid var(--border);">
       <div class="container">
         <div class="section-head center reveal">
           <span class="section-kicker">دموی تعاملی نمایشی</span>
@@ -199,12 +200,12 @@ with One Smart Command.</span></h1>
 
         <div class="bento-card full reveal demo-example">
           <!-- Interactive Command Bar -->
-          <div style="background:rgba(0,0,0,0.5); border:1px solid var(--border-focus); border-radius:16px; padding:18px 24px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:28px;">
+          <div style="background:var(--surface-inset); border:1px solid var(--border-focus); border-radius:16px; padding:18px 24px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:28px;">
             <div class="demo-command-copy">
-              <span style="display:grid; place-items:center; width:36px; height:36px; border-radius:10px; background:rgba(37,99,235,0.2); color:#38bdf8; font-weight:900;">AI</span>
+              <span style="display:grid; place-items:center; width:36px; height:36px; border-radius:10px; background:rgba(37,99,235,0.2); color:var(--blue-light); font-weight:900;">AI</span>
               <div>
                 <small style="color:var(--muted); font-size:12px; font-weight:800;">دستور شما به سیستم‌عامل:</small>
-                <div id="live-demo-prompt-text" style="font-size:16px; color:#f8fafc; font-weight:700;">«برای ساعت هوشمند ضدآب، یک مقاله سئو ۲۵۰۰ کلمه‌ای، ۳ تصویر Flux و جدول مشخصات بساز.»</div>
+                <div id="live-demo-prompt-text" style="font-size:16px; color:var(--text); font-weight:700;">«برای ساعت هوشمند ضدآب، یک مقاله سئو ۲۵۰۰ کلمه‌ای، ۳ تصویر Flux و جدول مشخصات بساز.»</div>
               </div>
             </div>
             <button class="button button-primary button-small" id="btn-run-live-demo" type="button">▶ پردازش مجدد دستور</button>
@@ -214,28 +215,28 @@ with One Smart Command.</span></h1>
           <div class="demo-pipeline">
             <div class="ui-metric-card" style="padding:20px;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span class="hero-badge" style="margin:0; padding:2px 8px; font-size:12px; background:rgba(37,99,235,0.2); color:#93c5fd;">گام ۱: دریافت و RAG</span>
-                <span style="color:#10b981; font-size:12px; font-weight:800;">✓ ۱۰۰ms</span>
+                <span class="hero-badge" style="margin:0; padding:2px 8px; font-size:12px; background:rgba(37,99,235,0.2); color:var(--blue-light);">گام ۱: دریافت و RAG</span>
+                <span style="color:var(--emerald); font-size:12px; font-weight:800;">✓ ۱۰۰ms</span>
               </div>
-              <strong style="font-size:16px; color:#f8fafc;">استخراج دانش سایت و کلمات کلیدی</strong>
+              <strong style="font-size:16px; color:var(--text);">استخراج دانش سایت و کلمات کلیدی</strong>
               <p style="margin:6px 0 0; color:var(--text-secondary); font-size:13.5px;">تطبیق با لحن برند (Brand Voice)، تحلیل رقبای گوگل و جلوگیری از محتوای تکراری (Cannibalization).</p>
             </div>
 
             <div class="ui-metric-card" style="padding:20px;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span class="hero-badge" style="margin:0; padding:2px 8px; font-size:12px; background:rgba(245,158,11,0.2); color:#fbbf24;">گام ۲: صف پس‌زمینه</span>
-                <span style="color:#10b981; font-size:12px; font-weight:800;">✓ بدون تاخیر سرور</span>
+                <span class="hero-badge" style="margin:0; padding:2px 8px; font-size:12px; background:rgba(245,158,11,0.2); color:var(--amber);">گام ۲: صف پس‌زمینه</span>
+                <span style="color:var(--emerald); font-size:12px; font-weight:800;">✓ بدون تاخیر سرور</span>
               </div>
-              <strong style="font-size:16px; color:#f8fafc;">تولید همزمان چند Provider</strong>
+              <strong style="font-size:16px; color:var(--text);">تولید همزمان چند Provider</strong>
               <p style="margin:6px 0 0; color:var(--text-secondary); font-size:13.5px;">اجرای غیرمسدودکننده بدون قطعی PHP، تولید تصویر با Flux و ممیزی کیفی Quality Gate.</p>
             </div>
 
             <div class="ui-metric-card" style="padding:20px; border-color:rgba(16,185,129,0.4);">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span class="hero-badge" style="margin:0; padding:2px 8px; font-size:12px; background:rgba(16,185,129,0.2); color:#6ee7b7;">گام ۳: پیش‌نویس آماده</span>
-                <span style="color:#10b981; font-size:12px; font-weight:800;">✓ در وردپرس</span>
+                <span class="hero-badge" style="margin:0; padding:2px 8px; font-size:12px; background:rgba(16,185,129,0.2); color:var(--emerald);">گام ۳: پیش‌نویس آماده</span>
+                <span style="color:var(--emerald); font-size:12px; font-weight:800;">✓ در وردپرس</span>
               </div>
-              <strong style="font-size:16px; color:#f8fafc;">ذخیره مستقیم در دیتابیس</strong>
+              <strong style="font-size:16px; color:var(--text);">ذخیره مستقیم در دیتابیس</strong>
               <p style="margin:6px 0 0; color:var(--text-secondary); font-size:13.5px;">مقاله در نوشته‌ها، عکس در Media Library و محصول همراه جدول در ووکامرس پیش‌نویس شد.</p>
             </div>
           </div>
@@ -247,9 +248,9 @@ with One Smart Command.</span></h1>
     <section class="section" id="voice">
       <div class="container">
         <div class="section-head center reveal">
-          <span class="section-kicker">دستیار صوتی زنده (نسخه ۶.۱۲)</span>
-          <h2 class="section-title">همین حالا امتحان کنید؛ <span class="gradient-text">گفت‌وگوی صوتی پیوسته فارسی.</span></h2>
-          <p class="section-desc">با فشردن دکمه میکروفون صحبت کنید یا سناریوهای آماده را انتخاب نمایید تا صدای هوش مصنوعی را به صورت زنده بشنوید.</p>
+          <span class="section-kicker">نمونه تجربهٔ صوتی محصول (نسخه ۶.۱۲)</span>
+          <h2 class="section-title">سناریوها را بشنوید؛ <span class="gradient-text">تجربه‌ای از دستیار صوتی فارسی.</span></h2>
+          <p class="section-desc">سناریوهای آماده، پاسخ‌های صوتی از پیش ضبط‌شده دارند. میکروفون فقط با اجازهٔ شما برای تشخیص گفتار مرورگر فعال می‌شود؛ این دمو به مدل AI متصل نیست.</p>
         </div>
 
         <p class="demo-notice"><span class="lang-fa">دموی نمایشی: صداهای سناریوها از پیش ضبط شده‌اند. اعداد سلامت و نتیجه‌ها فرضی هستند. تشخیص گفتار، در صورت اجازه شما، فقط توسط مرورگر انجام می‌شود.</span><span class="lang-en">Demonstration only: scenario audio is prerecorded, and metrics are illustrative. Optional Persian speech recognition is handled by your browser, not a live AI model.</span></p>
@@ -257,7 +258,7 @@ with One Smart Command.</span></h1>
           <div class="voice-topbar">
             <div style="display:flex; align-items:center; gap:8px;">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" stroke="#38bdf8" stroke-width="2"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3M8 22h8" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/></svg>
-              <strong style="color:#fff; font-size:16px;">کنسول تعاملی دستیار صوتی اتحادیار ۶.۱۲</strong>
+              <strong style="color:var(--text); font-size:16px;">کنسول تعاملی دستیار صوتی اتحادیار ۶.۱۲</strong>
             </div>
             <div style="display:flex; gap:8px;">
               <span class="hero-badge" style="margin:0; padding:4px 10px; font-size:12px;">SpeechRecognition</span>
@@ -287,15 +288,15 @@ with One Smart Command.</span></h1>
 
               <div class="voice-transcript-card">
                 <small style="display:block; color:var(--muted); font-size:12px; font-weight:800; margin-bottom:4px;">متن سناریوی آماده یا گفتار تشخیص‌داده‌شده:</small>
-                <div id="voice-transcript" style="font-size:15.5px; color:#f8fafc; font-style:italic;">« اتحادیار، برای ۵ محصول جدید ساعت هوشمند، توضیحات جذاب، جدول مشخصات و ۳ سناریوی ریلز اینستاگرام آماده کن. »</div>
+                <div id="voice-transcript" style="font-size:15.5px; color:var(--text); font-style:italic;">« اتحادیار، برای ۵ محصول جدید ساعت هوشمند، توضیحات جذاب، جدول مشخصات و ۳ سناریوی ریلز اینستاگرام آماده کن. »</div>
               </div>
 
               <div class="voice-reply-bubble" id="voice-reply-box">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                   <strong style="color:var(--blue-light); font-size:14px;">پاسخ نمایشی (بدون اجرای دستور):</strong>
-                  <span class="hero-badge" style="margin:0; padding:2px 8px; font-size:11.5px; background:rgba(16,185,129,0.2); color:#6ee7b7;">پاسخ از پیش ضبط‌شده</span>
+                  <span class="hero-badge" style="margin:0; padding:2px 8px; font-size:11.5px; background:rgba(16,185,129,0.2); color:var(--emerald);">پاسخ از پیش ضبط‌شده</span>
                 </div>
-                <div id="voice-reply-text" style="font-size:15.5px; color:#f8fafc; line-height:1.8;">
+                <div id="voice-reply-text" style="font-size:15.5px; color:var(--text); line-height:1.8;">
                   درود! ۵ عنوان سئو شده، توضیحات تجاری با لحن برند و جدول مشخصات فنی برای ساعت‌های هوشمند تولید و مستقیماً در ووکامرس پیش‌نویس شد. همچنین ۳ سناریوی ویدیویی ریلز همراه با Hook، متن روخوانی و زیرنویس فارسی SRT در استودیوی ویدیو آماده دانلود است.
                 </div>
               </div>
@@ -307,7 +308,7 @@ with One Smart Command.</span></h1>
                   <button class="prompt-chip active" type="button" data-voice-speed="1.0" aria-pressed="true">۱.۰x عادی</button>
                   <button class="prompt-chip" type="button" data-voice-speed="1.25" aria-pressed="false">۱.۲۵x سریع</button>
                 </div>
-                <button class="button button-ghost button-small" id="stop-voice-btn" type="button" style="color:#f87171; border-color:rgba(239,68,68,0.3);">
+                <button class="button button-ghost button-small" id="stop-voice-btn" type="button" style="color:var(--danger); border-color:rgba(239,68,68,0.3);">
                   ⏹ قطع فوری صدا (Stop Speech)
                 </button>
               </div>
@@ -347,7 +348,7 @@ with One Smart Command.</span></h1>
     </section>
 
     <!-- 5. PRODUCT ARCHITECTURE: CREATE / OPTIMIZE / AUTOMATE / GROW -->
-    <section class="section" id="architecture" style="background:rgba(11, 17, 32, 0.4); border-block:1px solid var(--border);">
+    <section class="section" id="architecture" style="background:var(--surface-inset); border-block:1px solid var(--border);">
       <div class="container">
         <div class="section-head center reveal">
           <span class="section-kicker">معماری ۴ ستون محصول</span>
@@ -391,9 +392,9 @@ with One Smart Command.</span></h1>
 
         <div class="comparison-grid reveal">
           <div class="bento-card" style="border-color:rgba(239,68,68,0.3); background:radial-gradient(circle at top right, rgba(239,68,68,0.08), transparent 60%), var(--panel-glass);">
-            <span class="hero-badge" style="background:rgba(239,68,68,0.15); color:#f87171; border-color:rgba(239,68,68,0.3); margin-bottom:12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 6 12 12M6 18 18 6"/></svg> بدون اتحادیار (آشفتگی و هدررفت زمان)</span>
-            <h3 style="color:#fff; font-size:20px; margin:0 0 12px;">۱۰ ابزار پراکنده + کپی‌پیست مداوم</h3>
-            <ul style="margin:0; padding:0 20px 0 0; color:#cbd5e1; font-size:14.5px; line-height:1.85; display:grid; gap:8px;">
+            <span class="hero-badge" style="background:rgba(239,68,68,0.15); color:var(--danger); border-color:rgba(239,68,68,0.3); margin-bottom:12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 6 12 12M6 18 18 6"/></svg> بدون اتحادیار (آشفتگی و هدررفت زمان)</span>
+            <h3 style="color:var(--text); font-size:20px; margin:0 0 12px;">۱۰ ابزار پراکنده + کپی‌پیست مداوم</h3>
+            <ul style="margin:0; padding:0 20px 0 0; color:var(--text-secondary); font-size:14.5px; line-height:1.85; display:grid; gap:8px;">
               <li>رفتن به سایت‌های خارجی هوش مصنوعی و کپی دستی متن</li>
               <li>خطای محدودیت زمانی سرور (Maximum Execution Time) در مقالات بلند</li>
               <li>دانلود عکس و آپلود مجدد در رسانه وردپرس و نوشتن دستی تگ Alt</li>
@@ -402,9 +403,9 @@ with One Smart Command.</span></h1>
           </div>
 
           <div class="bento-card" style="border-color:rgba(16,185,129,0.35); background:radial-gradient(circle at top right, rgba(16,185,129,0.1), transparent 60%), var(--panel-glass);">
-            <span class="hero-badge" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border-color:rgba(16,185,129,0.3); margin-bottom:12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12 4 4L19 6"/></svg> با اتحادیار ۶.۱۲ (یکپارچگی و سرعت)</span>
-            <h3 style="color:#fff; font-size:20px; margin:0 0 12px;">یک فرمان مستقیم در پیشخوان وردپرس</h3>
-            <ul style="margin:0; padding:0 20px 0 0; color:#cbd5e1; font-size:14.5px; line-height:1.85; display:grid; gap:8px;">
+            <span class="hero-badge" style="background:rgba(16,185,129,0.15); color:var(--emerald); border-color:rgba(16,185,129,0.3); margin-bottom:12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12 4 4L19 6"/></svg> با اتحادیار ۶.۱۲ (یکپارچگی و سرعت)</span>
+            <h3 style="color:var(--text); font-size:20px; margin:0 0 12px;">یک فرمان مستقیم در پیشخوان وردپرس</h3>
+            <ul style="margin:0; padding:0 20px 0 0; color:var(--text-secondary); font-size:14.5px; line-height:1.85; display:grid; gap:8px;">
               <li>فرمان صوتی یا متنی مستقیم داخل پیشخوان وردپرس</li>
               <li>پردازش پس‌زمینه در صف نامتقارن با صفر ثانیه مسدودی سرور</li>
               <li>ذخیره خودکار مقالات، تصاویر Flux و جداول در دیتابیس سایت</li>
@@ -416,7 +417,7 @@ with One Smart Command.</span></h1>
     </section>
 
     <!-- 7. WHY CHATGPT IS NOT ENOUGH (COMPARISON TABLE) -->
-    <section class="section" id="why-etehadyar" style="background:rgba(11, 17, 32, 0.4); border-block:1px solid var(--border);">
+    <section class="section" id="why-etehadyar" style="background:var(--surface-inset); border-block:1px solid var(--border);">
       <div class="container">
         <div class="section-head center reveal">
           <span class="section-kicker">بررسی صادقانه و تخصصی</span>
@@ -438,32 +439,32 @@ with One Smart Command.</span></h1>
                 <tr>
                   <td><strong>اتصال مستقیم به وردپرس و ووکامرس</strong></td>
                   <td>❌ نیازمند کپی و پیست دستی</td>
-                  <td><span style="color:#10b981; font-weight:800;">✓ پیش‌نویس مستقیم در دیتابیس</span></td>
+                  <td><span style="color:var(--emerald); font-weight:800;">✓ پیش‌نویس مستقیم در دیتابیس</span></td>
                 </tr>
                 <tr>
                   <td><strong>ذخیره مستقیم تصویر در رسانه با Alt</strong></td>
                   <td>❌ امکان‌پذیر نیست</td>
-                  <td><span style="color:#10b981; font-weight:800;">✓ ذخیره در Media Library با سئو</span></td>
+                  <td><span style="color:var(--emerald); font-weight:800;">✓ ذخیره در Media Library با سئو</span></td>
                 </tr>
                 <tr>
                   <td><strong>پردازش در صف نامتقارن پس‌زمینه</strong></td>
                   <td>❌ فقط پاسخ در همان لحظه</td>
-                  <td><span style="color:#10b981; font-weight:800;">✓ صف پس‌زمینه با Cron و Retry</span></td>
+                  <td><span style="color:var(--emerald); font-weight:800;">✓ صف پس‌زمینه با Cron و Retry</span></td>
                 </tr>
                 <tr>
                   <td><strong>سئو و همگام‌سازی با Yoast و Rank Math</strong></td>
                   <td>❌ متادیسکریپشن به صورت متن خام</td>
-                  <td><span style="color:#10b981; font-weight:800;">✓ تزریق خودکار به فیلدهای سئو و اسکیما</span></td>
+                  <td><span style="color:var(--emerald); font-weight:800;">✓ تزریق خودکار به فیلدهای سئو و اسکیما</span></td>
                 </tr>
                 <tr>
                   <td><strong>بهینه‌سازی دسته‌ای کاتالوگ فروشگاه</strong></td>
                   <td>❌ بررسی تک‌تک محصولات بسیار زمان‌بر</td>
-                  <td><span style="color:#10b981; font-weight:800;">✓ اسکن و ارتقای دسته‌ای محصولات ضعیف</span></td>
+                  <td><span style="color:var(--emerald); font-weight:800;">✓ اسکن و ارتقای دسته‌ای محصولات ضعیف</span></td>
                 </tr>
                 <tr>
                   <td><strong>امنیت کلیدها با رمزنگاری سمت سرور</strong></td>
                   <td>❌ اشتراک اکانت یا افشای کلید</td>
-                  <td><span style="color:#10b981; font-weight:800;">✓ صندوق امنیتی EAIW_Vault (AES-256)</span></td>
+                  <td><span style="color:var(--emerald); font-weight:800;">✓ صندوق امنیتی EAIW_Vault (AES-256)</span></td>
                 </tr>
               </tbody>
             </table>
@@ -507,7 +508,7 @@ with One Smart Command.</span></h1>
     </section>
 
     <!-- 9. WORKSPACES TOUR WITH CRISP ENGLISH SCREENSHOTS & LIGHTBOX -->
-    <section class="section" id="workspaces" style="background:rgba(11, 17, 32, 0.4); border-block:1px solid var(--border);">
+    <section class="section" id="workspaces" style="background:var(--surface-inset); border-block:1px solid var(--border);">
       <div class="container">
         <div class="section-head center reveal">
           <span class="section-kicker">فضاهای کاری واقعی</span>
@@ -528,10 +529,10 @@ with One Smart Command.</span></h1>
           <div class="device-header">
             <div class="device-dots"><i></i><i></i><i></i></div>
             <strong id="device-title">اتحادیار ۶.۱۲ — اتاق فرمان و پیشخوان جامع وردپرس</strong>
-            <span style="font-size:12px; color:#10b981;">● Online</span>
+            <span style="font-size:12px; color:var(--emerald);">● Online</span>
           </div>
 
-          <div style="padding:0; background:#070b14;">
+          <div style="padding:0; background:var(--surface-inset);">
             <!-- TAB 1: DASHBOARD -->
             <div class="tour-panel" id="tour-dashboard" role="tabpanel" aria-labelledby="tab-tour-dashboard" data-tour-panel="dashboard">
               <button class="image-zoom" type="button" data-lightbox="assets/images/ui/dashboard.webp" aria-label="نمایش تصویر بزرگ پیشخوان">
@@ -613,7 +614,7 @@ with One Smart Command.</span></h1>
     </section>
 
     <!-- 11. SMART ROI & TIME SAVINGS CALCULATOR -->
-    <section class="section" id="calculator" style="background:rgba(11, 17, 32, 0.4); border-block:1px solid var(--border);">
+    <section class="section" id="calculator" style="background:var(--surface-inset); border-block:1px solid var(--border);">
       <div class="container">
         <div class="section-head center reveal">
           <span class="section-kicker">محاسبه هوشمند ارزش</span>
@@ -626,29 +627,29 @@ with One Smart Command.</span></h1>
           <div>
             <div class="calc-group">
               <label for="calc-articles"><span>تعداد مقالات و صفحات سئو در ماه:</span><b id="calc-val-articles" style="color:var(--blue-light);">۲۰</b></label>
-              <input type="range" id="calc-articles" min="5" max="100" value="20" step="1">
+              <input type="range" id="calc-articles" min="0" max="100" value="20" step="1">
             </div>
             <div class="calc-group">
               <label for="calc-videos"><span>تعداد سناریو و ویدیوهای ماهانه:</span><b id="calc-val-videos" style="color:var(--blue-light);">۸</b></label>
-              <input type="range" id="calc-videos" min="1" max="30" value="8" step="1">
+              <input type="range" id="calc-videos" min="0" max="30" value="8" step="1">
             </div>
             <div class="calc-group">
               <label for="calc-support"><span>تعداد پاسخ به مشتریان و تیکت‌ها:</span><b id="calc-val-support" style="color:var(--blue-light);">۱۵۰</b></label>
-              <input type="range" id="calc-support" min="20" max="1000" value="150" step="10">
+              <input type="range" id="calc-support" min="0" max="1000" value="150" step="10">
             </div>
           </div>
 
           <div class="calc-result-panel">
             <small style="color:var(--muted); font-size:13px; font-weight:700;">برآورد صرفه‌جویی ماهانه تیم شما:</small>
             <div style="margin:18px 0;">
-              <strong id="res-hours" style="font-size:36px; font-weight:900; color:#fff;">۱۷۲</strong>
+              <strong id="res-hours" style="font-size:36px; font-weight:900; color:var(--text);">۱۷۲</strong>
               <span style="color:var(--text-secondary); font-size:16px;">ساعت کار تیمی آزادشده</span>
             </div>
             <div style="margin-bottom:18px;">
-              <strong id="res-cost" style="font-size:28px; font-weight:900; color:#34d399;">۲۷٬۵۲۰٬۰۰۰ تومان</strong>
+              <strong id="res-cost" style="font-size:28px; font-weight:900; color:var(--emerald);">۲۷٬۵۲۰٬۰۰۰ تومان</strong>
               <span style="display:block; color:var(--muted); font-size:13px;">معادل حقوق نیروهای تولید محتوا و پشتیبانی</span>
             </div>
-            <div style="font-size:14px; color:#cbd5e1;">
+            <div style="font-size:14px; color:var(--text-secondary);">
               زمان تقریبی بازگشت هزینه لایسنس: <strong id="res-roi-days" style="color:var(--blue-light);">۱۶ روز</strong>
             </div>
           </div>
@@ -667,9 +668,9 @@ with One Smart Command.</span></h1>
 
         <div class="bento-grid reveal">
           <div class="bento-card third" style="border-color:rgba(16,185,129,0.4);">
-            <span class="hero-badge" style="background:rgba(16,185,129,0.2); color:#6ee7b7; margin-bottom:12px;">✓ فعال در نسخه ۶.۱۲</span>
-            <h3 style="color:#fff; font-size:18px; margin:0 0 10px;">امکانات مستند و تثبیت‌شده</h3>
-            <ul style="margin:0; padding:0 18px 0 0; color:#cbd5e1; font-size:13.5px; line-height:1.8;">
+            <span class="hero-badge" style="background:rgba(16,185,129,0.2); color:var(--emerald); margin-bottom:12px;">✓ فعال در نسخه ۶.۱۲</span>
+            <h3 style="color:var(--text); font-size:18px; margin:0 0 10px;">امکانات مستند و تثبیت‌شده</h3>
+            <ul style="margin:0; padding:0 18px 0 0; color:var(--text-secondary); font-size:13.5px; line-height:1.8;">
               <li>گفت‌وگوی صوتی پیوسته زنده فارسی</li>
               <li>تبدیل صوت به متن با OpenAI Whisper</li>
               <li>صف کارهای نامتقارن با Smart Retry</li>
@@ -679,9 +680,9 @@ with One Smart Command.</span></h1>
           </div>
 
           <div class="bento-card third" style="border-color:rgba(56,189,248,0.4);">
-            <span class="hero-badge" style="background:rgba(56,189,248,0.2); color:#38bdf8; margin-bottom:12px;">⏳ در حال توسعه</span>
-            <h3 style="color:#fff; font-size:18px; margin:0 0 10px;">در دست توسعه مهندسی</h3>
-            <ul style="margin:0; padding:0 18px 0 0; color:#cbd5e1; font-size:13.5px; line-height:1.8;">
+            <span class="hero-badge" style="background:rgba(56,189,248,0.2); color:var(--blue-light); margin-bottom:12px;">⏳ در حال توسعه</span>
+            <h3 style="color:var(--text); font-size:18px; margin:0 0 10px;">در دست توسعه مهندسی</h3>
+            <ul style="margin:0; padding:0 18px 0 0; color:var(--text-secondary); font-size:13.5px; line-height:1.8;">
               <li>استریمینگ کلمه‌به‌کلمه پاسخ با WebSocket</li>
               <li>داشبورد تفکیک هزینه و سهم مصرف ماژول‌ها</li>
               <li>ارزیابی عمیق کیفیت پاسخ‌های چت‌بات</li>
@@ -689,9 +690,9 @@ with One Smart Command.</span></h1>
           </div>
 
           <div class="bento-card third">
-            <span class="hero-badge" style="background:rgba(255,255,255,0.1); color:#cbd5e1; margin-bottom:12px;">📌 برنامه‌ریزی‌شده</span>
-            <h3 style="color:#fff; font-size:18px; margin:0 0 10px;">برنامه‌های آینده</h3>
-            <ul style="margin:0; padding:0 18px 0 0; color:#cbd5e1; font-size:13.5px; line-height:1.8;">
+            <span class="hero-badge" style="background:var(--surface-subtle); color:var(--text-secondary); margin-bottom:12px;">📌 برنامه‌ریزی‌شده</span>
+            <h3 style="color:var(--text); font-size:18px; margin:0 0 10px;">برنامه‌های آینده</h3>
+            <ul style="margin:0; padding:0 18px 0 0; color:var(--text-secondary); font-size:13.5px; line-height:1.8;">
               <li>ماژولار کردن Safe Mode برای سرعت حداکثری</li>
               <li>یکپارچه‌سازی کشینگ وکتورهای معنایی</li>
             </ul>
