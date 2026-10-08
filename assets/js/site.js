@@ -49,7 +49,7 @@
         langButton.setAttribute('aria-label', en ? 'تغییر زبان به فارسی' : 'Switch to English overview');
         updateTitle();
       } else doc.title = initialTitle;
-      if (menuButton) menuButton.setAttribute('aria-label', label('باز کردن منو', 'Open menu'));
+      if (menuButton) menuButton.setAttribute('aria-label', menu?.classList.contains('open') ? label('بستن منو', 'Close menu') : label('باز کردن منو', 'Open menu'));
       if (!currencyTouched) setCurrency(initial ? stored('etehadyar-currency', en ? 'usd' : 'irr') : en ? 'usd' : 'irr');
       else window.ETEHADYAR_PUBLIC?.updateCheckout(root.lang, root.dataset.currency);
       window.ETEHADYAR_PUBLIC?.updateSchemas(root.lang);

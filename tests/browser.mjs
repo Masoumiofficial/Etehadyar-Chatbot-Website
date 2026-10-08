@@ -159,6 +159,91 @@ try {
       assert.notEqual(await tab.locator('.hero-gradient').first().evaluate(node => getComputedStyle(node).color), 'rgba(0, 0, 0, 0)');
     } finally { await isolated.close(); }
   });
+  await check('The light archive preserves generation labels, CMS counts and CSS 3D geometry', async () => {
+    await navigate('/changelog/');
+    assert.equal(await page.locator('html').getAttribute('data-theme'), 'light');
+    assert.equal(await page.locator('.cube-face').count(), 6);
+    assert.equal(await page.locator('.scene-cube').evaluate(node => getComputedStyle(node).transformStyle), 'preserve-3d');
+    assert.equal(await page.locator('.index-links a[href="#group-v6"] b').textContent(), 'نسل ششم');
+    assert.equal(await page.locator('.index-links a[href="#group-v6"] [data-index-count]').textContent(), '۶۵');
+    assert.equal(await page.locator('.cube-front [data-version]').textContent(), '6.12.0');
+    assert.equal(await page.locator('.release-card').count(), 113);
+  });
+  await check('Cinematic wheel scroll is eased, settles, resumes after idle and keeps keyboard anchors below the toolbar', async () => {
+    const isolated = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'no-preference' });
+    try {
+      const tab = await isolated.newPage(); await tab.goto(app.url + '/changelog/', { waitUntil: 'networkidle' });
+      assert.equal(await tab.locator('html').getAttribute('data-smooth-scroll'), 'on');
+      await tab.mouse.move(650, 420); await tab.mouse.wheel(0, 600);
+      await tab.waitForFunction(() => scrollY > 50 && document.documentElement.dataset.scrollActivity === 'active');
+      await tab.waitForFunction(() => document.documentElement.dataset.scrollActivity === 'idle');
+      const first = await tab.evaluate(() => scrollY); assert.ok(first > 400 && first < 650);
+      assert.equal(await tab.evaluate(() => window.ETEHADYAR_CINEMA.status().scrolling), false);
+      await tab.mouse.wheel(0, 350); await tab.waitForFunction(previous => scrollY > previous + 80, first);
+      await tab.waitForFunction(() => document.documentElement.dataset.scrollActivity === 'idle');
+      await tab.locator('.doc-actions [data-current-group]').focus(); await tab.keyboard.press('Enter');
+      await tab.waitForFunction(() => location.hash === '#group-v6' && document.documentElement.dataset.scrollActivity === 'idle' && document.activeElement.tagName === 'H2');
+      const geometry = await tab.evaluate(() => ({ group: document.getElementById('group-v6').getBoundingClientRect().top, toolbar: document.querySelector('.changelog-tools').getBoundingClientRect().bottom }));
+      assert.ok(geometry.group >= geometry.toolbar - 2, JSON.stringify(geometry));
+      assert.equal(await tab.evaluate(() => document.activeElement.tagName), 'H2');
+    } finally { await isolated.close(); }
+  });
+  await check('Filtered generations can be opened through sidebar deep links and regain readable labels', async () => {
+    await navigate('/changelog/'); await page.locator('#release-search').fill('۶.۱۲.۰');
+    assert.equal(await page.locator('#group-v1').isVisible(), false);
+    await page.evaluate(() => { location.hash = '#group-v1'; });
+    await page.waitForFunction(() => document.querySelector('#release-search').value === '' && !document.getElementById('group-v1').classList.contains('is-filtered'));
+    assert.equal(await page.locator('.index-links a[href="#group-v1"] b').textContent(), 'نسل اول');
+  });
+  await check('Smooth scrolling and animated shots switch off live for reduced motion, effects-off and mobile', async () => {
+    const isolated = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'no-preference' });
+    try {
+      const tab = await isolated.newPage(); await tab.goto(app.url + '/', { waitUntil: 'networkidle' });
+      assert.equal(await tab.locator('html').getAttribute('data-smooth-scroll'), 'on');
+      await tab.locator('[data-appearance="depth"]').click();
+      await tab.waitForFunction(() => document.documentElement.dataset.smoothScroll === 'native');
+      assert.equal(await tab.evaluate(() => window.ETEHADYAR_CINEMA.status().smooth), false);
+      assert.equal(await tab.locator('.scene-cube').evaluate(node => getComputedStyle(node).animationName), 'none');
+      assert.equal(await tab.locator('.cine-pending').count(), 0);
+      await tab.locator('[data-appearance="depth"]').click(); await tab.emulateMedia({ reducedMotion: 'reduce' });
+      await tab.waitForFunction(() => document.documentElement.dataset.smoothScroll === 'native');
+      await tab.emulateMedia({ reducedMotion: 'no-preference' }); await tab.setViewportSize({ width: 390, height: 844 });
+      await tab.waitForFunction(() => document.documentElement.dataset.smoothScroll === 'native');
+      assert.ok(await tab.evaluate(() => document.body.scrollWidth <= innerWidth + 1));
+    } finally { await isolated.close(); }
+  });
+  await check('Missing optional scroll vendor degrades to native scrolling with no uncaught errors', async () => {
+    const isolated = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'no-preference' });
+    try {
+      const tab = await isolated.newPage(); const problems = []; tab.on('pageerror', error => problems.push(error.message));
+      await tab.route('**/vendor/lenis-1.3.26.min.js', route => route.abort());
+      await tab.goto(app.url + '/changelog/', { waitUntil: 'networkidle' });
+      assert.equal(await tab.locator('html').getAttribute('data-smooth-scroll'), 'native');
+      await tab.mouse.move(700, 400); await tab.mouse.wheel(0, 400); await tab.waitForFunction(() => scrollY > 100);
+      assert.deepEqual(problems, []);
+    } finally { await isolated.close(); }
+  });
+  await check('Lightbox locks background scrolling and releases the cinematic engine on close', async () => {
+    const isolated = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'no-preference' });
+    try {
+      const tab = await isolated.newPage(); await tab.goto(app.url + '/', { waitUntil: 'networkidle' });
+      await tab.locator('[data-lightbox]').first().click();
+      await tab.waitForFunction(() => document.documentElement.dataset.scrollLock === 'on');
+      const start = await tab.evaluate(() => scrollY); await tab.mouse.move(600, 400); await tab.mouse.wheel(0, 600);
+      assert.equal(await tab.evaluate(() => scrollY), start);
+      assert.equal(await tab.evaluate(() => window.ETEHADYAR_CINEMA.status().locked), true);
+      await tab.keyboard.press('Escape'); await tab.waitForFunction(() => document.documentElement.dataset.scrollLock === 'off');
+      await tab.mouse.wheel(0, 400); await tab.waitForFunction(y => scrollY > y + 100, start);
+    } finally { await isolated.close(); }
+  });
+  await check('Reading progress reflects real page scroll and back-to-top restores keyboard focus', async () => {
+    await navigate('/changelog/'); await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
+    await page.waitForFunction(() => Number(document.querySelector('.reading-track').getAttribute('aria-valuenow')) === 100);
+    assert.equal(await page.locator('[data-reading-percent]').textContent(), '۱۰۰٪');
+    await page.locator('.back-to-top').click(); await page.waitForFunction(() => scrollY < 5);
+    assert.equal(await page.evaluate(() => document.activeElement.tagName), 'H1');
+  });
+  await navigate('/');
   await check('Unconfigured checkout is disabled and no offer points to the homepage', async () => {
     const links = await page.locator('[data-buy]').evaluateAll(nodes => nodes.map(node => ({ disabled: node.getAttribute('aria-disabled'), href: node.getAttribute('href') })));
     assert.ok(links.length > 0 && links.every(link => link.disabled === 'true' && link.href === null));

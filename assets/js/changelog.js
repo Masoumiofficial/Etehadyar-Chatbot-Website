@@ -63,14 +63,21 @@
     if (event.key === '/' && !editing && search) { event.preventDefault(); search.focus(); }
     if (event.key === 'Escape' && doc.activeElement === search) { search.value = ''; search.blur(); applyFilters(); }
   });
-  function openHash() {
+  function openHash(keyboard = false) {
     if (!location.hash) return;
     let target;
     try { target = doc.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (_) { return; }
-    if (!target || !target.matches('details')) return;
+    if (!target || !target.matches('details, .release-group')) return;
     if (target.classList.contains('is-filtered')) { activeFilter = 'all'; if (search) search.value = ''; applyFilters(); }
-    target.open = true;
-    requestAnimationFrame(() => target.scrollIntoView({ block: 'start' }));
+    if (target.matches('details')) target.open = true;
+    requestAnimationFrame(() => {
+      if (window.ETEHADYAR_CINEMA) window.ETEHADYAR_CINEMA.scrollTo(target, { onComplete: keyboard === true ? () => {
+        const focus = target.matches('details') ? target.querySelector('summary') : target.querySelector('h2') || target;
+        const old = focus.getAttribute('tabindex'); focus.setAttribute('tabindex', '-1'); focus.focus({ preventScroll: true });
+        focus.addEventListener('blur', () => { if (old === null) focus.removeAttribute('tabindex'); else focus.setAttribute('tabindex', old); }, { once: true });
+      } : undefined });
+      else target.scrollIntoView({ block: 'start' });
+    });
   }
   function refreshCards() {
     cards = [...doc.querySelectorAll('.release-card')]; groups = [...doc.querySelectorAll('.release-group')];
@@ -87,6 +94,7 @@
   refreshCards();
   (window.ETEHADYAR_READY || Promise.resolve()).then(refreshCards);
   window.addEventListener('hashchange', openHash);
+  window.addEventListener('etehadyar:archive-link', event => openHash(event.detail?.keyboard === true));
   function onScroll() {
     const y = window.scrollY;
     header?.classList.toggle('scrolled', y > 20);

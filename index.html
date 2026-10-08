@@ -26,6 +26,7 @@
   <title>اتحادیار 6.12 — افزونه هوشمند و اتوماسیون وردپرس و ووکامرس</title>
   <link rel="stylesheet" href="assets/css/site.css">
   <link rel="stylesheet" href="assets/css/appearance.css">
+  <link rel="stylesheet" href="assets/css/cinematic.css">
   <script id="software-schema" type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -108,7 +109,7 @@
 }
 </script>
 </head>
-<body>
+<body data-cinematic>
   <a class="skip-link" href="#main"><span class="lang-fa">رفتن به محتوای اصلی</span><span class="lang-en">Skip to main content</span></a>
   <div class="ambient" aria-hidden="true"></div>
   <div class="scroll-progress" aria-hidden="true"></div>
@@ -161,8 +162,9 @@
   <p class="content-status container" data-content-status role="status" hidden>بارگذاری تنظیمات سایت انجام نشد؛ محتوای پیش‌فرض نمایش داده می‌شود و خرید غیرفعال است.</p>
   <main id="main">
     <!-- 1. HERO SECTION (5-SECOND CLARITY & VALUE PROPOSITION) -->
-    <section class="hero" id="top">
-      <div class="container hero-copy reveal">
+    <section class="hero hero-cinematic" id="top">
+      <div class="container cinematic-hero-layout">
+      <div class="hero-copy reveal">
         <div class="hero-badge"><i></i><span class="lang-fa" data-content="liveBadgeFa">افزونه جامع هوش مصنوعی و اتوماسیون وردپرس و ووکامرس · نسخه ۶.۱۲ پایدار</span><span class="lang-en" data-content="liveBadgeEn">AI Operating System &amp; Automation for WordPress · v6.12 Stable</span></div>
         <span class="hero-kicker-story"><span class="lang-fa">یکپارچگی واقعی هوش مصنوعی با هسته سایت شما</span><span class="lang-en">Seamless AI Integration for WordPress & WooCommerce</span></span>
         <h1><span class="lang-fa hero-gradient" data-content="headlineFa">وردپرس و ووکامرس را با یک فرمان،
@@ -186,6 +188,22 @@ with One Smart Command.</span></h1>
           <span><span class="lang-fa">ببینید اتحادیار چه کار می‌کند</span><span class="lang-en">See how Etehadyar works</span></span>
           <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14m-6-6 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
+      </div>
+      <div class="cinema-scene scene-home" data-cinema-scene aria-hidden="true">
+          <div class="scene-halo"></div><div class="scene-grid"></div><div class="scene-floor"></div>
+          <div class="scene-orbit orbit-one"><i></i></div><div class="scene-orbit orbit-two"><i></i></div><div class="scene-orbit orbit-three"><i></i></div>
+          <div class="scene-cube-wrap">
+            <div class="scene-cube">
+              <div class="cube-face cube-front"><img src="assets/images/app-icon.webp" alt="" width="68" height="68"><b>ETEHADYAR</b><span data-version>6.12.0</span><small>WORDPRESS AI OS</small></div>
+              <div class="cube-face cube-back"></div><div class="cube-face cube-right"><i></i><i></i><i></i></div><div class="cube-face cube-left"><i></i><i></i><i></i></div>
+              <div class="cube-face cube-top"><span>E / AI</span></div><div class="cube-face cube-bottom"></div>
+            </div>
+          </div>
+          <div class="scene-note note-releases"><span class="scene-note-icon"><svg viewBox="0 0 24 24" fill="none"><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></span><span><small>DOCUMENTED RELEASES</small><b><span data-release-count>۱۱۲</span> نسخه پایدار</b></span></div>
+          <div class="scene-note note-ai"><span class="scene-note-icon"><svg viewBox="0 0 24 24" fill="none"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3Z" stroke="currentColor" stroke-width="1.5"/></svg></span><span><small>ONE CONNECTED SYSTEM</small><b>WordPress + WooCommerce</b></span></div>
+          <span class="scene-coordinate coordinate-top">01 / INTELLIGENCE</span><span class="scene-coordinate coordinate-bottom">DESIGNED TO WORK TOGETHER</span>
+          <span class="scene-star star-one"></span><span class="scene-star star-two"></span><span class="scene-star star-three"></span>
+        </div>
       </div>
     </section>
 
@@ -809,5 +827,7 @@ with One Smart Command.</span></h1>
   <script src="assets/js/config.js"></script>
   <script src="assets/js/content.js"></script>
   <script src="assets/js/site.js"></script>
+  <script src="assets/js/vendor/lenis-1.3.26.min.js"></script>
+  <script src="assets/js/cinematic.js"></script>
 </body>
 </html>

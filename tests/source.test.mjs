@@ -81,3 +81,12 @@ test('deployment archive is reproducible and contains no private files or node_m
     execFileSync('python', ['-c', `import zipfile,sys; z=zipfile.ZipFile(sys.argv[1]); assert z.testzip() is None; names=z.namelist(); assert 'data/site_data.json' in names; assert 'admin/lib.php' in names; assert '.htaccess' in names; assert 'admin/.htaccess' in names; assert 'deploy/nginx.conf.example' in names; assert not any('node_modules' in n or 'credentials' in n or 'admin_creds' in n or '.git/' in n or n.startswith('tests/') or 'dev-server' in n for n in names)`, first]);
   } finally { await fs.rm(directory, { recursive: true, force: true }); }
 });
+
+
+test('vendored scroll runtime matches the pinned package and includes its MIT license', async () => {
+  const packaged = await fs.readFile(path.join(repository, 'node_modules/lenis/dist/lenis.min.js'), 'utf8');
+  const shipped = await fs.readFile(path.join(repository, 'assets/js/vendor/lenis-1.3.26.min.js'), 'utf8');
+  assert.equal(shipped, packaged.split('//# sourceMappingURL=')[0].trimEnd() + '\n');
+  assert.equal(await fs.readFile(path.join(repository, 'assets/js/vendor/lenis-LICENSE.txt'), 'utf8'), await fs.readFile(path.join(repository, 'node_modules/lenis/LICENSE'), 'utf8'));
+  execFileSync(process.execPath, ['--check', path.join(repository, 'assets/js/vendor/lenis-1.3.26.min.js')]);
+});

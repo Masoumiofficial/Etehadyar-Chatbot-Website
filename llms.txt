@@ -16,7 +16,8 @@
 - [CMS content](https://etehadyar.ir/data/site_data.json): current public headline, FAQ, price, product version and releases. Do not store secrets in this file.
 
 ## Website behavior and limits
-- Light is the default appearance, with an optional dark scheme. Decorative depth is a subtle pointer-parallax illusion, not a five-dimensional technology or live product functionality.
+- Light is the default appearance, with an optional dark scheme. Home and changelog have cinematic six-face CSS 3D scenes, decorative orbits and pointer/scroll depth; these are visual effects, not a five-dimensional technology or live product functionality.
+- Local MIT-licensed Lenis 1.3.26 smooths desktop wheel input when effects are allowed; native scrolling remains the fallback. No external CDN is needed. Scroll RAF stops at idle. Reading progress is actual document scroll, not product telemetry.
 - Motion is disabled on narrow/touch-oriented devices, with reduced motion or forced colors, and while the page is hidden. There is an effects-off control.
 - Public navigation and changelog filtering do not wait for CMS hydration. Expired CMS sessions preserve an exportable draft in the same tab only; it is not persisted or published automatically.
 - Audio demonstrations use prerecorded local MP3s and fixed sample replies; they do not contact a live AI model. Optional browser speech recognition requires permission and may use the browser vendor's recognition service.

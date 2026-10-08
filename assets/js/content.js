@@ -145,7 +145,9 @@
       if (section.title) body.append(node('h3', section.title, 'sub-heading'));
       const list = node('ul', undefined, 'release-list');
       section.items.forEach(text => {
-        const item = node('li'); const mark = node('i', '✓'); mark.setAttribute('aria-hidden', 'true');
+        const item = node('li'); const mark = node('i'); mark.setAttribute('aria-hidden', 'true');
+        const check = doc.createElementNS('http://www.w3.org/2000/svg', 'svg'); check.setAttribute('viewBox', '0 0 12 12');
+        const path = doc.createElementNS('http://www.w3.org/2000/svg', 'path'); path.setAttribute('d', 'm2 6 2.5 2.5L10 3'); path.setAttribute('fill', 'none'); path.setAttribute('stroke', 'currentColor'); path.setAttribute('stroke-width', '1.5'); check.append(path); mark.append(check);
         item.append(mark, node('span', text)); list.append(item);
       });
       body.append(list);
@@ -183,12 +185,14 @@
       }
     });
     stream.append(fragment);
+    const currentGroup = doc.querySelector('[data-current-group]');
+    if (currentGroup) currentGroup.href = '#group-v' + config.currentVersion.split('.')[0];
     const all = doc.querySelector('[data-filter="all"]');
     if (all) all.textContent = 'همه نسخه‌ها (' + faNumber(data.releases.length) + ')';
     doc.querySelectorAll('.index-card a').forEach(link => {
       const major = link.hash.replace('#group-', '');
       const releases = groups.get(major) || [];
-      const badge = link.querySelector('b'); if (badge) badge.textContent = faNumber(releases.length);
+      const badge = link.querySelector('[data-index-count]'); if (badge) badge.textContent = faNumber(releases.length);
       link.hidden = !releases.length;
     });
   }
