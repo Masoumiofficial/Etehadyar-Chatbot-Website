@@ -1,0 +1,22 @@
+# Apache 2.4: keep source tooling, old credentials and release artifacts private.
+Options -Indexes
+DirectoryIndex index.html
+
+<FilesMatch "(^\.|\.zip$|\.md$|^package(?:-lock)?\.json$|^admin_creds\.json$|^credentials\.json$)">
+  Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^(?:scripts|tests|deploy|node_modules|\.git|\.github)(?:/|$) - [F,L]
+  RewriteRule ^admin/lib\.php$ - [F,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+  <FilesMatch "\.(html|js|css|json)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>

@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="description" content="مستندات رسمی و راهنمای جامع نصب، راه‌اندازی، ماژول‌های هوش مصنوعی، تنظیمات امنیتی و عیب‌یابی سیستم‌عامل اتحادیار ۶.۱۲.">
+  <link rel="canonical" href="https://etehadyar.ir/docs/">
+  <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="fa_IR">
+  <meta property="og:title" content="مستندات رسمی اتحادیار ۶.۱۲ — راهنمای جامع مهندسی">
+  <meta property="og:description" content="راهنمای گام‌به‌گام نصب، راه‌اندازی، اتصال کلیدها به Vault، کارخانه محتوا، ویدیو ساز، ووکامرس و دستیار صوتی.">
+  <meta property="og:url" content="https://etehadyar.ir/docs/">
+  <meta property="og:image" content="https://etehadyar.ir/assets/images/og-cover.jpg">
+  <title>مستندات رسمی اتحادیار ۶.۱۲ — Etehadyar Documentation</title>
+  <link rel="stylesheet" href="../assets/css/site.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "مستندات رسمی و فنی اتحادیار ۶.۱۲",
+    "description": "راهنمای کامل نصب، پیکربندی، ماژول‌های هوش مصنوعی، صف کارها و امنیت اتحادیار.",
+    "url": "https://etehadyar.ir/docs/",
+    "author": {
+      "@type": "Person",
+      "name": "Sajad Masoumi"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "EtehadWP",
+      "url": "https://etehadwp.com/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#docs-content">رفتن به محتوای مستندات</a>
+  <div class="ambient" aria-hidden="true"></div>
+  <div class="scroll-progress" aria-hidden="true"></div>
+
+  <!-- Header -->
+  <header class="site-header" id="site-header">
+    <div class="container">
+      <div class="nav-shell">
+        <a class="brand" href="../" aria-label="اتحادیار">
+          <img class="brand-icon" src="../assets/images/app-icon.webp" alt="" width="40" height="40">
+          <span class="brand-copy"><strong data-site-name-fa>اتحادیار</strong><small>OFFICIAL DOCS · v6.12</small></span>
+        </a>
+        <nav class="desktop-nav" aria-label="ناوبری">
+          <a href="../#voice">دستیار صوتی</a>
+          <a href="../#architecture">صف کارها</a>
+          <a href="../#architecture">کارخانه محتوا</a>
+          <a href="../#workspaces">فضاهای کاری</a>
+          <a href="../#pricing">قیمت</a>
+          <a href="./" class="active">مستندات</a>
+          <a href="../about/">درباره ما</a>
+          <a href="../changelog/">تاریخچه (۱۱۲ نسخه)</a>
+        </nav>
+        <div class="nav-actions"><button class="menu-button" id="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="باز کردن منو">☰</button>
+          <a class="button button-primary button-small" data-buy aria-disabled="true" role="link" tabindex="-1"><span class="lang-fa">خرید به‌زودی؛ درگاه تنظیم نشده</span><span class="lang-en">Checkout not configured yet</span></a>
+        </div>
+        <nav class="mobile-menu" id="mobile-menu" aria-label="ناوبری موبایل"><a href="../">صفحه اصلی</a><a href="../docs/">مستندات</a><a href="../about/">درباره ما</a><a href="../changelog/">تاریخچه</a><a href="../#pricing">قیمت</a></nav>
+      </div>
+    </div>
+  </header>
+
+  <p class="content-status container" data-content-status role="status" hidden>بارگذاری تنظیمات سایت انجام نشد؛ محتوای پیش‌فرض نمایش داده می‌شود و خرید غیرفعال است.</p>
+  <main id="docs-content">
+    <section class="section hero" style="min-height:50vh; padding-top:140px; padding-bottom:40px;">
+      <div class="container hero-copy reveal">
+        <div class="hero-badge"><i></i>مرکز مستندات فنی و راهنمای توسعه‌دهندگان</div>
+        <h1>مستندات رسمی <span class="hero-gradient">اتحادیار ۶.۱۲</span></h1>
+        <p>راهنمای گام‌به‌گام نصب، راه‌اندازی، معماری امنیتی، ماژول‌های هفت‌گانه تولید محتوا، صف کارهای نامتقارن و اتصال به APIهای هوش مصنوعی.</p>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0;">
+      <div class="container docs-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="docs-sidebar" style="position:sticky; top:100px; background:var(--panel-glass); border:1px solid var(--border); border-radius:20px; padding:20px; backdrop-filter:blur(16px);">
+          <strong style="color:var(--blue-light); font-size:14px; display:block; margin-bottom:12px;">فهرست بخش‌ها</strong>
+          <nav aria-label="فهرست مستندات" style="display:grid; gap:6px; font-size:14px; color:var(--text-secondary);">
+            <a href="#doc-cms">۰. راه‌اندازی CMS این وب‌سایت</a>
+            <a href="#doc-install" style="padding:6px 10px; border-radius:8px; display:block; transition:all 0.2s;">۱. نصب و راه‌اندازی سریع</a>
+            <a href="#doc-vault" style="padding:6px 10px; border-radius:8px; display:block; transition:all 0.2s;">۲. صندوق امنیتی کلیدها (Vault)</a>
+            <a href="#doc-voice" style="padding:6px 10px; border-radius:8px; display:block; transition:all 0.2s;">۳. دستیار صوتی زنده و Whisper</a>
+            <a href="#doc-factory" style="padding:6px 10px; border-radius:8px; display:block; transition:all 0.2s;">۴. کارخانه محتوای ۷گانه</a>
+            <a href="#doc-queue" style="padding:6px 10px; border-radius:8px; display:block; transition:all 0.2s;">۵. صف کارهای نامتقارن (Queue)</a>
+            <a href="#doc-woo" style="padding:6px 10px; border-radius:8px; display:block; transition:all 0.2s;">۶. فروش‌یار ووکامرس</a>
+            <a href="#doc-troubleshoot" style="padding:6px 10px; border-radius:8px; display:block; transition:all 0.2s;">۷. عیب‌یابی و پرسش‌های رایج</a>
+          </nav>
+        </aside>
+
+        <!-- Documentation Body -->
+        <div class="docs-main">
+          
+          <article class="bento-card" id="doc-cms"><h2>راه‌اندازی پنل همین وب‌سایت</h2><p>این بسته سایت معرفی محصول است، نه خود افزونه وردپرس. برای استفاده از CMS، هاست PHP نیاز است.</p><ol><li>فایل‌های سایت و تنظیمات محافظت وب‌سرور را در روت عمومی قرار دهید.</li><li>در ترمینال هاست فرمان <code dir="ltr">php scripts/setup-admin.php --username YOUR_USERNAME</code> را اجرا کنید. رمز پیش‌فرض وجود ندارد و رمز انتخابی فقط به‌صورت هش خارج از پوشه عمومی ذخیره می‌شود.</li><li>از صفحه <a href="../admin/">پنل مدیریت</a> وارد شوید و لینک‌های واقعی HTTPS درگاه پرداخت را ثبت کنید. تا آن زمان خرید غیرفعال است.</li><li>بعد از ذخیره موفق، صفحات عمومی اطلاعات <code>data/site_data.json</code> را می‌خوانند. فایل ZIP پنل فقط شامل داده‌های ذخیره‌شده و فایل‌های عمومی است، نه رمز یا نشست‌ها.</li></ol><p>مستندات بعدی امکانات افزونه را توصیف می‌کنند؛ این سایت مدل AI یا صف وردپرس را اجرا یا پایش نمی‌کند.</p></article>
+          <!-- DOC SECTION 1 -->
+          <article class="bento-card full" id="doc-install">
+            <h2 style="font-size:24px; font-weight:900; margin:0 0 14px; color:#fff;">۱. نیازمندی‌ها و نصب سریع در وردپرس</h2>
+            <p style="color:var(--text-secondary); line-height:1.8;">
+              اتحادیار به صورت یک افزونه کاملاً استاندارد و سبک برای وردپرس طراحی شده است و به هیچ کتابخانه خارجی (مانند Composer) یا سرورهای واسط سنگین وابسته نیست.
+            </p>
+            <div style="background:rgba(0,0,0,0.4); border:1px solid var(--border); border-radius:12px; padding:16px; margin:16px 0; font-size:14.5px;">
+              <strong>حداقل نیازمندی‌های هاست و سرور:</strong>
+              <ul style="margin:8px 0 0; padding:0 20px 0 0; color:#cbd5e1;">
+                <li>نگارش وردپرس: <strong>WordPress 6.0 به بالا</strong></li>
+                <li>نگارش پی‌اچ‌پی: <strong>PHP 7.4 تا PHP 8.3+</strong> (سازگار با هاست‌های اشتراکی سی‌پنل و دایرکت‌ادمین)</li>
+                <li>ماژول‌های فعال PHP: <code>curl</code>, <code>openssl</code>, <code>json</code>, <code>mbstring</code></li>
+                <li>افزونه اختیاری: <code>FFmpeg</code> روی سرور برای رندر مستقیم فایل‌های ویدیویی MP4 (در صورت عدم وجود، پیش‌نمایش HTML و فایل SRT ارائه می‌شود).</li>
+              </ul>
+            </div>
+          </article>
+
+          <!-- DOC SECTION 2 -->
+          <article class="bento-card full" id="doc-vault">
+            <h2 style="font-size:24px; font-weight:900; margin:0 0 14px; color:#fff;">۲. صندوق امنیتی کلیدها (EAIW_Vault)</h2>
+            <p style="color:var(--text-secondary); line-height:1.8;">
+              اتحادیار از صندوق رمزنگاری‌شده داخلی بر پایه الگوریتم پیشرفته <strong>AES-256-GCM</strong> استفاده می‌کند. کلیدهای API سرویس‌های OpenAI, Gemini, Claude و GapGPT با استفاده از سالت‌های اختصاصی فایل <code>wp-config.php</code> شما رمزگذاری می‌شوند.
+            </p>
+            <ul style="margin:12px 0 0; padding:0 20px 0 0; color:#cbd5e1; font-size:14.5px;">
+              <li>کلیدها هرگز در سورس‌کد مرورگر یا فرانت‌اند سایت افشا نمی‌شوند.</li>
+              <li>درخواست‌ها مستقیماً از سمت سرور شما (Server-to-Server) به API ارائه‌دهنده ارسال می‌شوند.</li>
+              <li>امکان تعریف چندین پروفایل کلید و سوییچ خودکار در صورت اتمام اعتبار وجود دارد.</li>
+            </ul>
+          </article>
+
+          <!-- DOC SECTION 3 -->
+          <article class="bento-card full" id="doc-voice">
+            <h2 style="font-size:24px; font-weight:900; margin:0 0 14px; color:#fff;">۳. دستیار صوتی زنده و تبدیل گفتار Whisper</h2>
+            <p style="color:var(--text-secondary); line-height:1.8;">
+              در نگارش ۶.۱۲، قابلیت گفت‌وگوی صوتی پیوسته فارسی به هسته محصول اضافه شد. این ماژول بر پایه دو ستون عمل می‌کند:
+            </p>
+            <ol style="margin:12px 0 0; padding:0 20px 0 0; color:#cbd5e1; font-size:14.5px; line-height:1.8;">
+              <li><strong>تشخیص گفتار پیوسته (Live Speech Mode):</strong> استفاده از Web Speech API برای شنیدن گفتار فارسی، تشخیص هوشمند مکث‌های کاربر و پخش صوت پاسخ با <code>speechSynthesis</code>.</li>
+              <li><strong>درخواست‌های صوتی طولانی (Whisper STT):</strong> ضبط صدا با فرمت‌های WebM/MP3/OGG تا سقف ۸ مگابایت با <code>MediaRecorder</code> و تبدیل دقیق به متن فارسی توسط مدل Whisper، الصاق فایل صوتی به تیکت کارشناس و پاک‌سازی خودکار پس از ۷ روز.</li>
+            </ol>
+          </article>
+
+          <!-- DOC SECTION 4 -->
+          <article class="bento-card full" id="doc-factory">
+            <h2 style="font-size:24px; font-weight:900; margin:0 0 14px; color:#fff;">۴. کارخانه محتوای چندکاناله (Omnichannel Content Factory)</h2>
+            <p style="color:var(--text-secondary); line-height:1.8;">
+              کارخانه محتوا با دریافت یک پرامپت یا موضوع، همزمان هفت خروجی استاندارد تولید می‌کند:
+            </p>
+            <ul style="margin:12px 0 0; padding:0 20px 0 0; color:#cbd5e1; font-size:14.5px; line-height:1.8;">
+              <li><strong>مقاله HTML سئو شده:</strong> همراه با کیفیت‌سنج Quality Gate، ساختار هدینگ، جدول و اسکیمای FAQ.</li>
+              <li><strong>تصاویر Flux:</strong> تولید تصاویر با هوش مصنوعی و ثبت مستقیم در Media Library با تگ Alt فارسی.</li>
+              <li><strong>سناریوی ویدیویی و SRT:</strong> تفکیک صحنه‌ها، متن روخوانی و فایل زیرنویس همگام SRT.</li>
+              <li><strong>پادکست و صوت:</strong> سنتز گفتار روان فارسی با قابلیت دانلود فایل MP3.</li>
+              <li><strong>کاروسل و شبکه‌های اجتماعی:</strong> کپی آماده برای اینستاگرام، تلگرام و توییتر.</li>
+              <li><strong>ایمیل مارکتینگ:</strong> عنوان با نرخ بازگشایی بالا و بدنه ترغیب‌کننده.</li>
+            </ul>
+          </article>
+
+          <!-- DOC SECTION 5 -->
+          <article class="bento-card full" id="doc-queue">
+            <h2 style="font-size:24px; font-weight:900; margin:0 0 14px; color:#fff;">۵. صف کارهای نامتقارن (Background Job Queue)</h2>
+            <p style="color:var(--text-secondary); line-height:1.8;">
+              برای جلوگیری از خطای Maximum Execution Time در هاست‌های اشتراکی، تمامی عملیات حجیم در جدول اختصاصی صف ذخیره شده و توسط کران‌جاب ۱۵ دقیقه‌ای وردپرس پردازش می‌شوند. در صورت قطعی اینترنت یا خطای موقت API، سیستم تلاش مجدد (Smart Exponential Retry) کار را به پایان می‌رساند.
+            </p>
+          </article>
+
+          <!-- DOC SECTION 6 -->
+          <article class="bento-card full" id="doc-woo">
+            <h2 style="font-size:24px; font-weight:900; margin:0 0 14px; color:#fff;">۶. فروش‌یار ووکامرس (WooCommerce Turbo)</h2>
+            <p style="color:var(--text-secondary); line-height:1.8;">
+              اتصال مستقیم به جداول کاتالوگ ووکامرس برای بازنویسی و غنی‌سازی دسته‌ای محصولات ضعیف، ایجاد جدول مشخصات فنی، تولید پرسش‌های متداول خریداران و افزایش نرخ تبدیل فروشگاه.
+            </p>
+          </article>
+
+          <!-- DOC SECTION 7 -->
+          <article class="bento-card full" id="doc-troubleshoot">
+            <h2 style="font-size:24px; font-weight:900; margin:0 0 14px; color:#fff;">۷. عیب‌یابی و پرسش‌های رایج فنی</h2>
+            <div style="display:grid; gap:12px; margin-top:14px;">
+              <details style="padding:12px; background:rgba(0,0,0,0.3); border-radius:10px; border:1px solid var(--border);">
+                <summary style="font-weight:700; cursor:pointer; color:var(--blue-light);">آیا اتحادیار با افزونه‌های سئو سازگار است؟</summary>
+                <p style="margin:8px 0 0; color:var(--text-secondary); font-size:14px;">بله؛ فیلدهای متاتایتل، متادیسکریپشن و اسکیما مستقیماً با پلاگین‌های Yoast SEO، Rank Math و All in One SEO همگام می‌شوند.</p>
+              </details>
+              <details style="padding:12px; background:rgba(0,0,0,0.3); border-radius:10px; border:1px solid var(--border);">
+                <summary style="font-weight:700; cursor:pointer; color:var(--blue-light);">آیا برای استفاده نیاز به سرور اختصاصی است؟</summary>
+                <p style="margin:8px 0 0; color:var(--text-secondary); font-size:14px;">خیر؛ به دلیل استفاده از صف نامتقارن، اتحادیار روی هاست‌های اشتراکی سی‌پنل و دایرکت‌ادمین ایران بدون مسدود شدن CPU اجرا می‌شود.</p>
+              </details>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="../">
+          <img class="brand-icon" src="../assets/images/app-icon.webp" alt="" width="40" height="40">
+          <span class="brand-copy"><strong data-site-name-fa>اتحادیار</strong><small>AI WORDPRESS OS · v6.12</small></span>
+        </a>
+        <p>سیستم‌عامل هوشمند وردپرس؛ قدرت گرفته از اتحاد وردپرس، توسعه سجاد معصومی.</p>
+      </div>
+      <div>
+        <strong>مستندات و بخش‌ها</strong>
+        <a href="../#voice">دستیار صوتی</a>
+        <a href="../#architecture">صف کارها</a>
+        <a href="../#architecture">کارخانه محتوا</a>
+        <a href="../#pricing">قیمت و خرید</a>
+        <a href="./">مستندات فنی</a>
+      </div>
+      <div>
+        <strong>منابع و اکوسیستم</strong>
+        <a href="../changelog/">تاریخچه تغییرات (<span data-release-count>۱۱۲</span> نسخه)</a>
+        <a href="../admin/">پنل مدیریت CMS</a>
+        <a href="https://etehadwp.com/" target="_blank" rel="noopener">اتحاد وردپرس</a>
+        <a href="https://sajadmasoumi.com/" target="_blank" rel="noopener">سجاد معصومی</a>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© ۲۰۲۶ اتحادیار · etehadyar.ir · نسخه ۶.۱۲.۰</span>
+      <span>قدرت گرفته از اتحاد وردپرس</span>
+    </div>
+  </footer>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/content.js"></script>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

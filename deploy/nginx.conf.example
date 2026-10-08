@@ -1,0 +1,43 @@
+# Example only: replace domain, paths, TLS certificate and PHP-FPM socket.
+# The deploy ZIP is static site files + a small PHP CMS, not a WordPress plugin.
+server {
+    listen 80;
+    server_name etehadyar.ir;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name etehadyar.ir;
+    root /var/www/etehadyar/public;
+    index index.html;
+    ssl_certificate /path/to/fullchain.pem;
+    ssl_certificate_key /path/to/privkey.pem;
+    client_max_body_size 2m;
+    autoindex off;
+
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" always;
+    add_header Cache-Control "no-cache";
+
+    # Only the public content file may be served from data/.
+    location = /data/site_data.json { try_files $uri =404; }
+    location /data/ { return 403; }
+    location ~ /\. { return 403; }
+    location ~ ^/(scripts|tests|deploy|node_modules)(/|$) { return 403; }
+    location ~* \.(zip|md|mjs)$ { return 403; }
+    location ~ ^/package(-lock)?\.json$ { return 403; }
+
+    # No other PHP source is exposed or executed.
+    location = /admin/api.php {
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root/admin/api.php;
+        fastcgi_param HTTPS on;
+        fastcgi_param ETEHADYAR_PRIVATE_DIR /var/www/etehadyar/private;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+        fastcgi_read_timeout 30s;
+    }
+    location ~ \.php$ { return 403; }
+    location / { try_files $uri $uri/ =404; }
+}

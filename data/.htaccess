@@ -1,0 +1,8 @@
+# Only the public CMS content file may be downloaded.
+Options -Indexes
+<FilesMatch "^(?!site_data\.json$).*">
+  Require all denied
+</FilesMatch>
+<Files "site_data.json">
+  Require all granted
+</Files>

@@ -1,0 +1,5 @@
+# This shared helper must never be requested directly, even without mod_rewrite.
+Options -Indexes
+<Files "lib.php">
+  Require all denied
+</Files>

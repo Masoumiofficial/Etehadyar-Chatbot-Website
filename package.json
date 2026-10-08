@@ -1,0 +1,21 @@
+{
+  "name": "etehadyar-website",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Static product website with a server-authenticated PHP CMS; Node is development/test tooling only.",
+  "scripts": {
+    "dev": "node scripts/dev-server.mjs",
+    "test": "node --test --test-concurrency=1 tests/api.test.mjs tests/source.test.mjs",
+    "test:browser": "node tests/browser.mjs",
+    "build:release": "python scripts/build-release.py"
+  },
+  "engines": { "node": ">=22.17" },
+  "devDependencies": {
+    "@php-wasm/node": "3.1.54",
+    "@php-wasm/universal": "3.1.54",
+    "@sparticuz/chromium": "153.0.0",
+    "axe-core": "4.14.0",
+    "playwright": "1.64.0"
+  }
+}

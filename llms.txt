@@ -1,0 +1,35 @@
+# Etehadyar website and product information
+
+> Product marketing website with a small PHP content-management panel. This repository is not the WordPress plugin or theme implementation. Product capabilities described by the site must not be interpreted as verified capabilities of this website package.
+
+## Identity
+- Product: Etehadyar (اتحادیار), described as an AI WordPress Operating System.
+- Product version described in the initial content: 6.12.0.
+- Organization: EtehadWP (اتحاد وردپرس); founder named in the supplied content: Sajad Masoumi (سجاد معصومی).
+- Canonical product site: https://etehadyar.ir/ (live hosting status not verified by this repository audit).
+
+## Public content
+- [Home](https://etehadyar.ir/): overview, pricing, FAQ and clearly labeled demonstrations.
+- [Documentation](https://etehadyar.ir/docs/): Persian product documentation.
+- [About](https://etehadyar.ir/about/): organization and product background.
+- [Changelog](https://etehadyar.ir/changelog/): product history, searchable from the shared public JSON.
+- [CMS content](https://etehadyar.ir/data/site_data.json): current public headline, FAQ, price, product version and releases. Do not store secrets in this file.
+
+## Website behavior and limits
+- Audio demonstrations use prerecorded local MP3s and fixed sample replies; they do not contact a live AI model. Optional browser speech recognition requires permission and may use the browser vendor's recognition service.
+- Pipeline indicators are a simulation, not live queue execution or server health telemetry.
+- ROI is an estimate, excluding AI API costs.
+- English coverage is partial; technical pages remain Persian.
+- The published product history describes voice, content generation, WooCommerce, queues, reporting and vault features. Their implementation is outside this repository and has not been validated here.
+
+## Pricing and checkout
+- Initial displayed lifetime license: 15,000,000 Toman / 150 USD; current values come from the public CMS JSON.
+- Iranian structured-data currency is IRR: one Toman equals ten IRR.
+- Checkout links are disabled until separate real HTTPS destinations are configured. The website is not a payment gateway and does not verify payment success.
+
+## Deployment
+- Static HTML/CSS/JS and PHP CMS; Node is development and test tooling only.
+- Use maintained PHP 8.3 or newer for production. Syntax and smoke compatibility have also been checked with PHP-WASM 7.4.33, not native legacy hosting.
+- No default admin account; hashed credentials and sessions must remain outside the public document root.
+- HTTPS, hosting permissions, server rules and actual payment destinations require operator verification.
+- Repository deployment guide: README-FA.md. Scope and automated test results: AUDIT-FULL-REPORT.md.

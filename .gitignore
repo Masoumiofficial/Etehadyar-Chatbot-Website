@@ -1,0 +1,13 @@
+node_modules/
+coverage/
+playwright-report/
+test-results/
+.cache/
+.etehadyar-private/
+.env
+.env.*
+!.env.example
+data/admin_creds.json
+**/.etehadyar-*
+*.log
+__pycache__/

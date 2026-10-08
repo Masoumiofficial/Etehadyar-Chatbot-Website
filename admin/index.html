@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <title>پنل مدیریت اختصاصی اتحادیار — Etehadyar Admin CMS</title>
+  <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <!-- 1. SECURE LOGIN SCREEN (Credentials hidden for security) -->
+  <div class="auth-wrapper" id="auth-screen">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <img src="../assets/images/app-icon.webp" alt="اتحادیار">
+        <h1>پنل مدیریت اتحادیار</h1>
+        <p>سیستم مدیریت محتوا و پیکربندی سیستم‌عامل هوشمند وردپرس</p>
+      </div>
+
+      <p id="frame-notice" class="setup-notice" hidden>برای ورود در پیش‌نمایش، <a href="./" target="_blank" rel="noopener noreferrer">پنل را در تب مستقل باز کنید</a> تا محدودیت کوکی شخص ثالث مانع ورود نشود.</p>
+      <div id="setup-notice" class="setup-notice" role="status" hidden>
+        <strong>مدیر هنوز راه‌اندازی نشده است.</strong>
+        <p>این نسخه حساب یا رمز پیش‌فرض ندارد. مالک هاست باید فرمان زیر را در ترمینال اجرا کند یا نام کاربری و هش رمز را در تنظیمات خصوصی هاست قرار دهد.</p>
+        <code dir="ltr">php scripts/setup-admin.php --username YOUR_USERNAME</code>
+        <p>اطلاعات ورود خارج از روت عمومی ذخیره می‌شود. هیچ رمزی در این صفحه یا حافظه مرورگر نگهداری نمی‌شود.</p>
+      </div>
+      <form id="login-form" style="display:grid; gap:16px; text-align:right;">
+        <div class="form-group">
+          <label for="login-user">نام کاربری</label>
+          <input class="form-input" type="text" id="login-user" required autocomplete="username" placeholder="نام کاربری مدیریت">
+        </div>
+        <div class="form-group">
+          <label for="login-pass">رمز عبور</label>
+          <input class="form-input" type="password" id="login-pass" required autocomplete="current-password" placeholder="••••••••">
+        </div>
+        <div id="login-error" class="login-error" role="alert" hidden></div>
+        <button class="btn btn-primary" type="submit" id="btn-login-submit" disabled style="width:100%; height:46px; margin-top:6px;">
+          ورود به پنل مدیریت
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. MAIN CMS SHELL -->
+  <div class="admin-shell" id="admin-app" hidden>
+    
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div>
+        <a class="sidebar-brand" href="../" aria-label="بازگشت به سایت اتحادیار">
+          <img src="../assets/images/app-icon.webp" alt="اتحادیار">
+          <div>
+            <strong>اتحادیار CMS</strong>
+            <small>UNIVERSE OS ADMIN</small>
+          </div>
+        </a>
+
+        <nav class="sidebar-nav" aria-label="بخش‌های مدیریت">
+          <button class="nav-item active" data-tab="tab-dashboard" type="button">
+            <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="9" rx="2" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="5" rx="2" stroke="currentColor" stroke-width="2"/><rect x="14" y="12" width="7" height="9" rx="2" stroke="currentColor" stroke-width="2"/><rect x="3" y="16" width="7" height="5" rx="2" stroke="currentColor" stroke-width="2"/></svg>
+            <span>پیشخوان و آمار</span>
+          </button>
+          <button class="nav-item" data-tab="tab-config" type="button">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" stroke-width="2"/></svg>
+            <span>تنظیمات و قیمت‌گذاری</span>
+          </button>
+          <button class="nav-item" data-tab="tab-landing" type="button">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="currentColor" stroke-width="2"/></svg>
+            <span>مدیریت متون لندینگ</span>
+          </button>
+          <button class="nav-item" data-tab="tab-changelog" type="button">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/><polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2"/><line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2"/><line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2"/><polyline points="10 9 9 9 8 9" stroke="currentColor" stroke-width="2"/></svg>
+            <span>مدیریت تاریخچه نسخه‌ها</span>
+            <span class="nav-badge" id="badge-releases-count">112</span>
+          </button>
+          <button class="nav-item" data-tab="tab-faqs" type="button">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <span>سوالات متداول (FAQ)</span>
+          </button>
+          <button class="nav-item" data-tab="tab-workspaces" type="button">
+            <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/><line x1="8" y1="21" x2="16" y2="21" stroke="currentColor" stroke-width="2"/><line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" stroke-width="2"/></svg>
+            <span>فضاهای کاری و تصاویر</span>
+          </button>
+          <button class="nav-item" data-tab="tab-export" type="button">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>امنیت، خروجی و لاگ</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <a class="btn btn-secondary btn-small" href="../" target="_blank" rel="noopener noreferrer" style="width:100%;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          مشاهده زنده وب‌سایت
+        </a>
+        <button class="btn btn-danger btn-small" id="btn-logout" type="button" style="width:100%;">
+          خروج از سیستم
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="admin-main">
+      <!-- Top Bar -->
+      <header class="admin-topbar">
+        <div class="topbar-left"><p id="save-status" class="save-status" aria-live="polite"></p>
+          <h2 class="topbar-title" id="tab-title">پیشخوان مدیریت</h2>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-secondary btn-small" id="btn-reload-data" type="button">بارگذاری مجدد</button>
+          <button class="btn btn-secondary btn-small" id="btn-revert" type="button">
+            بازگردانی تغییرات
+          </button>
+          <button class="btn btn-primary btn-small" id="btn-save-all" disabled type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="currentColor" stroke-width="2"/><polyline points="17 21 17 13 7 13 7 21" stroke="currentColor" stroke-width="2"/><polyline points="7 3 7 8 15 8" stroke="currentColor" stroke-width="2"/></svg>
+            ذخیره و انتشار تغییرات
+          </button>
+        </div>
+      </header>
+
+      <!-- Content Views -->
+      <div class="admin-content">
+
+        <!-- TAB 1: DASHBOARD -->
+        <section class="admin-tab-panel active" id="tab-dashboard">
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m13 2-3 8H4l7 12 3-8h6L13 2Z"/></svg></div>
+              <small>نسخه فعال فعلی</small>
+              <strong id="kpi-version">6.12.0</strong>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/></svg></div>
+              <small>قیمت لایسنس (ایران)</small>
+              <strong id="kpi-price">۱۵٬۰۰۰٬۰۰۰ ت</strong>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 3h12v18H6zM9 7h6M9 11h6M9 15h4"/></svg></div>
+              <small>تعداد نسخه‌های ثبت‌شده</small>
+              <strong id="kpi-releases">112 نسخه</strong>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9 9a3 3 0 0 1 6 0c0 2-3 2-3 4m0 4h.01"/></svg></div>
+              <small>سوالات متداول فعال</small>
+              <strong id="kpi-faqs">6 مورد</strong>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="card-header">
+              <div>
+                <h3>دسترسی و اقدامات سریع</h3>
+                <p>مدیریت مستقیم بخش‌های کلیدی وب‌سایت</p>
+              </div>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:12px;">
+              <button class="btn btn-secondary" data-open-tab="tab-changelog" data-add-release>
+                + افزودن نسخه جدید به تاریخچه
+              </button>
+              <button class="btn btn-secondary" data-open-tab="tab-config">
+                ویرایش قیمت و لینک‌های خرید
+              </button>
+              <button class="btn btn-secondary" data-open-tab="tab-landing">
+                ویرایش متون لندینگ پیج
+              </button>
+              <button class="btn btn-secondary" data-open-tab="tab-export">
+                دانلود بسته زیپ کامل سایت
+              </button>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="card-header">
+              <div>
+                <h3>وضعیت سیستم و فایل‌های هسته</h3>
+                <p>گزارش سلامت یکپارچگی فایل‌های دیتابیس</p>
+              </div>
+            </div>
+            <ul class="system-status-list">
+              <li>داده عمومی سایت: <code>data/site_data.json</code>، مشترک با صفحه اصلی و تاریخچه.</li>
+              <li>ورود: نشست سرور، کوکی HttpOnly و توکن CSRF؛ بدون ذخیره رمز در مرورگر.</li>
+              <li>ذخیره: اعتبارسنجی، نوشتن اتمی و تشخیص تعارض بین نشست‌ها.</li>
+              <li>این پنل به سرویس‌های AI متصل نیست و سلامت افزونه وردپرس را اندازه‌گیری نمی‌کند.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- TAB 2: CONFIG & PRICING -->
+        <section class="admin-tab-panel" id="tab-config">
+          <div class="admin-card">
+            <div class="card-header">
+              <div>
+                <h3>پیکربندی عمومی و هویت محصول</h3>
+                <p>اطلاعات برند، شماره نسخه و متون اصلی</p>
+              </div>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="cfg-sitename-fa">نام محصول (فارسی)</label>
+                <input class="form-input" type="text" id="cfg-sitename-fa" value="اتحادیار">
+              </div>
+              <div class="form-group">
+                <label for="cfg-sitename-en">نام محصول (انگلیسی)</label>
+                <input class="form-input" type="text" id="cfg-sitename-en" value="Etehadyar">
+              </div>
+              <div class="form-group">
+                <label for="cfg-version">شماره نسخه پایدار فعلی</label>
+                <input class="form-input" type="text" id="cfg-version" value="6.12.0">
+                <small>این نسخه باید در تاریخچه پایدار ثبت شده باشد؛ شماره نسخه و اسکیما از داده مرکزی خوانده می‌شوند.</small>
+              </div>
+              <div class="form-group">
+                <label for="cfg-tagline-fa">شعار برند (فارسی)</label>
+                <input class="form-input" type="text" id="cfg-tagline-fa" value="سیستم‌عامل هوشمند وردپرس">
+              </div>
+              <div class="form-group full"><label for="cfg-tagline-en">شعار برند (انگلیسی)</label><input class="form-input" type="text" id="cfg-tagline-en" dir="ltr"></div>
+              <div class="form-group full"><label for="cfg-url-product">دامنه رسمی محصول (HTTPS)</label><input class="form-input" type="url" id="cfg-url-product" dir="ltr"></div>
+              <div class="form-group full"><label for="cfg-url-contact">لینک تماس واقعی (اختیاری)</label><input class="form-input" type="url" id="cfg-url-contact" dir="ltr"></div>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="card-header">
+              <div>
+                <h3>قیمت‌گذاری و لینک‌های پرداخت (Checkout)</h3>
+                <p>تنظیم مبالغ پرداختی و آدرس درگاه‌های خرید</p>
+              </div>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="cfg-price-irr">مبلغ به تومان (ایران)</label>
+                <input class="form-input" type="text" id="cfg-price-irr" value="۱۵٬۰۰۰٬۰۰۰">
+              </div>
+              <div class="form-group">
+                <label for="cfg-price-usd">مبلغ به دلار (International)</label>
+                <input class="form-input" type="text" id="cfg-price-usd" value="150">
+              </div>
+              <div class="form-group full">
+                <label for="cfg-url-ir">آدرس لینک خرید داخلی (تومان)</label>
+                <input class="form-input" type="url" id="cfg-url-ir" dir="ltr" placeholder="https://your-payment-provider.example/checkout">
+                <small>فقط HTTPS؛ خالی بودن این فیلد خرید داخلی را غیرفعال می‌کند.</small>
+              </div>
+              <div class="form-group full">
+                <label for="cfg-url-intl">آدرس لینک خرید بین‌المللی (دلار)</label>
+                <input class="form-input" type="url" id="cfg-url-intl" dir="ltr" placeholder="https://your-payment-provider.example/checkout">
+                <small>لینک درگاه واقعی را وارد کنید؛ صفحه اصلی محصول پذیرفته نمی‌شود.</small>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 3: LANDING CONTENT -->
+        <section class="admin-tab-panel" id="tab-landing">
+          <div class="admin-card">
+            <div class="card-header">
+              <div>
+                <h3>بخش Hero لندینگ پیج</h3>
+                <p>تیترها و متون ترغیب‌کننده بالای صفحه</p>
+              </div>
+            </div>
+            <div class="form-grid">
+              <div class="form-group full">
+                <label for="hero-badge-fa">متن بج زنده بالای تیتر</label>
+                <input class="form-input" type="text" id="hero-badge-fa">
+              </div>
+              <div class="form-group full">
+                <label for="hero-headline-fa">تیتر اصلی هیرو (فارسی)</label>
+                <input class="form-input" type="text" id="hero-headline-fa">
+              </div>
+              <div class="form-group full">
+                <label for="hero-desc-fa">توضیحات تکمیلی هیرو (فارسی)</label>
+                <textarea class="form-textarea" id="hero-desc-fa"></textarea>
+              </div>
+              <div class="form-group full"><label for="hero-badge-en">متن بج (انگلیسی)</label><input class="form-input" id="hero-badge-en" dir="ltr"></div>
+              <div class="form-group full"><label for="hero-headline-en">تیتر اصلی (انگلیسی)</label><input class="form-input" id="hero-headline-en" dir="ltr"></div>
+              <div class="form-group full"><label for="hero-desc-en">توضیحات (انگلیسی)</label><textarea class="form-textarea" id="hero-desc-en" dir="ltr"></textarea></div>
+              <div class="form-group"><label for="hero-primary-fa">متن دکمه خرید (فارسی)</label><input class="form-input" id="hero-primary-fa"></div>
+              <div class="form-group"><label for="hero-primary-en">متن دکمه خرید (انگلیسی)</label><input class="form-input" id="hero-primary-en" dir="ltr"></div>
+              <div class="form-group"><label for="hero-ghost-fa">متن دکمه دمو (فارسی)</label><input class="form-input" id="hero-ghost-fa"></div>
+              <div class="form-group"><label for="hero-ghost-en">متن دکمه دمو (انگلیسی)</label><input class="form-input" id="hero-ghost-en" dir="ltr"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 4: CHANGELOG MANAGER -->
+        <section class="admin-tab-panel" id="tab-changelog">
+          <div class="admin-card">
+            <div class="card-header">
+              <div>
+                <h3>مدیریت تاریخچه تغییرات و نسخه‌ها</h3>
+                <p>افزودن نسخه جدید، ویرایش یا حذف نسخه‌های قبلی</p>
+              </div>
+              <button class="btn btn-primary btn-small" id="btn-open-add-release" type="button">
+                + افزودن نسخه جدید
+              </button>
+            </div>
+
+            <div style="display:flex; gap:12px; margin-bottom:16px;">
+              <input class="form-input" type="search" id="admin-search-releases" aria-label="جستجو در نسخه‌ها" placeholder="جستجو در نسخه‌ها (مثلاً 6.12 یا صوت)..." style="max-width:340px;">
+              <select class="form-select" id="admin-filter-major" aria-label="فیلتر نسل نسخه‌ها" style="max-width:180px;">
+                <option value="all">همه نسل‌ها</option>
+                <option value="v6">نسل ۶</option>
+                <option value="v5">نسل ۵</option>
+                <option value="v4">نسل ۴</option>
+                <option value="v3">نسل ۳</option>
+                <option value="v2">نسل ۲</option>
+                <option value="v1">نسل ۱</option>
+                <option value="alpha">Alpha</option>
+              </select>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>نسخه</th>
+                    <th>عنوان نسخه</th>
+                    <th>تعداد تغییرات</th>
+                    <th>عملیات</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-releases-tbody">
+                  <!-- Rendered via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 5: FAQ MANAGER -->
+        <section class="admin-tab-panel" id="tab-faqs">
+          <div class="admin-card">
+            <div class="card-header">
+              <div>
+                <h3>مدیریت پرسش‌های متداول (FAQ)</h3>
+                <p>افزودن، ویرایش و مدیریت سوالات متداول در صفحه اصلی</p>
+              </div>
+              <button class="btn btn-primary btn-small" id="btn-open-add-faq" type="button">
+                + افزودن سوال جدید
+              </button>
+            </div>
+
+            <div id="admin-faqs-list" style="display:grid; gap:14px;">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 6: WORKSPACES & MEDIA -->
+        <section class="admin-tab-panel" id="tab-workspaces">
+          <div class="admin-card">
+            <div class="card-header">
+              <div>
+                <h3>فضاهای کاری و پیش‌نمایش‌های بصری</h3>
+                <p>تصاویر و توضیحات ۶ فضای کاری محصول در تور تعاملی</p>
+              </div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+              <div class="admin-card" style="margin:0; padding:18px;">
+                <strong style="color:#38bdf8;">۰۱. اتاق فرمان (Dashboard)</strong>
+                <p style="font-size:13px; color:var(--admin-muted); margin:4px 0 10px;">پیش‌نمایش: <code>assets/images/ui/dashboard.webp</code> (فارسی و سه‌بعدی)</p>
+                <img src="../assets/images/ui/dashboard.webp" alt="Dashboard" style="border-radius:10px; max-height:140px; width:100%; object-fit:cover;">
+              </div>
+              <div class="admin-card" style="margin:0; padding:18px;">
+                <strong style="color:#38bdf8;">۰۲. کارخانه محتوا (Factory)</strong>
+                <p style="font-size:13px; color:var(--admin-muted); margin:4px 0 10px;">پیش‌نمایش: <code>assets/images/ui/factory.webp</code> (۷ خروجی همزمان)</p>
+                <img src="../assets/images/ui/factory.webp" alt="Factory" style="border-radius:10px; max-height:140px; width:100%; object-fit:cover;">
+              </div>
+              <div class="admin-card" style="margin:0; padding:18px;">
+                <strong style="color:#38bdf8;">۰۳. ویدیو ساز (Video Studio)</strong>
+                <p style="font-size:13px; color:var(--admin-muted); margin:4px 0 10px;">پیش‌نمایش: <code>assets/images/ui/video.webp</code> (MP4 و SRT)</p>
+                <img src="../assets/images/ui/video.webp" alt="Video" style="border-radius:10px; max-height:140px; width:100%; object-fit:cover;">
+              </div>
+              <div class="admin-card" style="margin:0; padding:18px;">
+                <strong style="color:#38bdf8;">۰۴. فروش‌یار (WooCommerce Turbo)</strong>
+                <p style="font-size:13px; color:var(--admin-muted); margin:4px 0 10px;">پیش‌نمایش: <code>assets/images/ui/woo.webp</code> (بهینه‌ساز محصولات)</p>
+                <img src="../assets/images/ui/woo.webp" alt="Woo" style="border-radius:10px; max-height:140px; width:100%; object-fit:cover;">
+              </div>
+              <div class="admin-card" style="margin:0; padding:18px;">
+                <strong style="color:#38bdf8;">۰۵. گزارش‌های مدیریتی (Reports)</strong>
+                <p style="font-size:13px; color:var(--admin-muted); margin:4px 0 10px;">پیش‌نمایش: <code>assets/images/ui/reports.webp</code> (XLSX و PDF)</p>
+                <img src="../assets/images/ui/reports.webp" alt="Reports" style="border-radius:10px; max-height:140px; width:100%; object-fit:cover;">
+              </div>
+              <div class="admin-card" style="margin:0; padding:18px;">
+                <strong style="color:#38bdf8;">۰۶. پشتیبانی صوتی (Live Voice)</strong>
+                <p style="font-size:13px; color:var(--admin-muted); margin:4px 0 10px;">پیش‌نمایش: <code>assets/images/ui/voice.webp</code> (گفت‌وگوی زنده)</p>
+                <img src="../assets/images/ui/voice.webp" alt="Voice" style="border-radius:10px; max-height:140px; width:100%; object-fit:cover;">
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 7: EXPORT & SECURITY -->
+        <section class="admin-tab-panel" id="tab-export">
+          <div class="admin-card">
+            <div class="card-header">
+              <div>
+                <h3>دانلود بسته نهایی سایت (Export ZIP)</h3>
+                <p>تولید و دانلود فایل زیپ کامل سایت با تمام تغییرات اعمال شده</p>
+              </div>
+            </div>
+            <p style="color:var(--admin-muted)">
+              با کلیک روی دکمه زیر، فایل‌های عمومی سایت و آخرین داده‌های ذخیره‌شده در یک فایل زیپ دریافت می‌شوند. رمزها، نشست‌ها و تنظیمات خصوصی مدیر داخل بسته قرار نمی‌گیرند.
+            </p>
+            <button class="btn btn-primary" id="btn-download-zip" type="button">
+              📦 دانلود فایل زیپ کامل سایت (ZIP Package)
+            </button>
+          </div>
+
+          <div class="admin-card">
+            <div class="card-header">
+              <div>
+                <h3>پشتیبان‌گیری و بازگردانی دیتای JSON</h3>
+                <p>پشتیبان‌گیری از تنظیمات، سوالات و نسخه‌ها</p>
+              </div>
+            </div>
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+              <button class="btn btn-secondary" id="btn-export-json" type="button">
+                دریافت فایل پشتیبان (site_data.json)
+              </button>
+              <label class="btn btn-secondary" for="btn-import-json" style="cursor:pointer;">
+                بازگردانی از فایل پشتیبان
+                <input type="file" id="btn-import-json" accept="application/json,.json">
+              </label>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="card-header">
+              <div>
+                <h3>تغییر رمز عبور ورود به پنل مدیریت</h3>
+                <p>تنظیم کلمه عبور جدید برای ورود ایمن به CMS</p>
+              </div>
+            </div>
+            <form id="form-change-password" class="form-grid" style="max-width:600px;">
+              <div class="form-group full">
+                <label for="new-admin-user">نام کاربری جدید</label>
+                <input class="form-input" type="text" id="new-admin-user" autocomplete="username" required placeholder="نام کاربری جدید">
+              </div>
+              <div class="form-group full"><label for="current-admin-pass">رمز فعلی</label><input class="form-input" type="password" id="current-admin-pass" autocomplete="current-password" required></div>
+              <div class="form-group full">
+                <label for="new-admin-pass">رمز عبور جدید</label>
+                <input class="form-input" type="password" id="new-admin-pass" autocomplete="new-password" minlength="12" required placeholder="حداقل ۱۲ کاراکتر، حداکثر ۷۲ بایت">
+              </div>
+              <div class="form-group full"><label for="confirm-admin-pass">تکرار رمز جدید</label><input class="form-input" type="password" id="confirm-admin-pass" autocomplete="new-password" minlength="12" required></div>
+              <button class="btn btn-primary" type="submit">
+                ذخیره اطلاعات امنیتی جدید
+              </button>
+            </form>
+          </div>
+        </section>
+
+      </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL: ADD / EDIT RELEASE -->
+  <div class="admin-modal" id="modal-release" role="dialog" aria-modal="true" aria-labelledby="modal-release-title" hidden>
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-release-title">افزودن نسخه جدید به تاریخچه</h3>
+        <button class="modal-close" aria-label="بستن پنجره" type="button" data-close-modal="modal-release">×</button>
+      </div>
+      <form id="form-release" style="display:grid; gap:16px;">
+        <input type="hidden" id="rel-edit-index" value="-1">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="rel-version">شماره نسخه (مثلاً 6.13.0)</label>
+            <input class="form-input" type="text" id="rel-version" required placeholder="6.13.0">
+          </div>
+          <div class="form-group">
+            <label for="rel-title">عنوان نسخه</label>
+            <input class="form-input" type="text" id="rel-title" required placeholder="بهینه‌سازی برداری پایگاه دانش">
+          </div>
+        </div>
+        <div class="form-group"><label for="rel-alpha"><input type="checkbox" id="rel-alpha"> نسخه آزمایشی (Alpha)</label></div>
+        <div class="form-group">
+          <label for="rel-items">لیست تغییرات (هر مورد در یک خط):</label>
+          <textarea class="form-textarea" id="rel-items" style="min-height:140px;" placeholder="- افزودن قابلیت جدید&#10;- بهینه‌سازی سرعت پاسخ‌گویی&#10;- اصلاح مشکل سازگاری با PHP 8.3"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" type="button" data-close-modal="modal-release">انصراف</button>
+          <button class="btn btn-primary" type="submit">ذخیره نسخه</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD / EDIT FAQ -->
+  <div class="admin-modal" id="modal-faq" role="dialog" aria-modal="true" aria-labelledby="modal-faq-title" hidden>
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-faq-title">افزودن سوال متداول جدید</h3>
+        <button class="modal-close" aria-label="بستن پنجره" type="button" data-close-modal="modal-faq">×</button>
+      </div>
+      <form id="form-faq" style="display:grid; gap:16px;">
+        <input type="hidden" id="faq-edit-index" value="-1">
+        <div class="form-group">
+          <label for="faq-q-fa">متن سوال (فارسی)</label>
+          <input class="form-input" type="text" id="faq-q-fa" required>
+        </div>
+        <div class="form-group">
+          <label for="faq-a-fa">متن پاسخ (فارسی)</label>
+          <textarea class="form-textarea" id="faq-a-fa" required></textarea>
+        </div>
+        <div class="form-group"><label for="faq-q-en">متن سوال (انگلیسی، اختیاری)</label><input class="form-input" id="faq-q-en" dir="ltr"></div>
+        <div class="form-group"><label for="faq-a-en">متن پاسخ (انگلیسی، اختیاری)</label><textarea class="form-textarea" id="faq-a-en" dir="ltr"></textarea></div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" type="button" data-close-modal="modal-faq">انصراف</button>
+          <button class="btn btn-primary" type="submit">ذخیره سوال</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="admin-toast" id="admin-toast" role="status" aria-live="polite" aria-atomic="true">
+    <span>✓ تغییرات با موفقیت ذخیره و منتشر شد.</span>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
